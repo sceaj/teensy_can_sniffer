@@ -1,0 +1,13 @@
+# Backup files
+*~
+
+# Generated Files
+*.elf
+*.lst
+*.map
+*.o
+
+# Ignore default output directories
+.dep/
+Debug/
+Release/
