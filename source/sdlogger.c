@@ -9,7 +9,7 @@
 #include "ff.h"
 #include "string.h"
 
-#define LOG_BUFFER_SIZE 512
+#define LOG_BUFFER_SIZE 4096
 #define LOG_BUFFER_AVAIL (LOG_BUFFER_SIZE - (g_dataBufferNext - g_dataBuffer))
 #define LOG_BUFFER_MIN_FREE 40
 
@@ -130,7 +130,7 @@ status_t checkRollLogger(void) {
     // Check the size of the current log
     fr = f_stat(g_currentPathname, &fno);
     if (fr == FR_OK) {
-    	// 4MB max log size
+    	// 1MB max log size
     	if (fno.fsize > (1024 * 1024)) {
     		// Roll file...
     		strcpy(filename, strrchr(g_currentPathname, '/') + 1);

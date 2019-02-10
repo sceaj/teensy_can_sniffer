@@ -15,7 +15,7 @@
       <generate_extended_information>false</generate_extended_information>
    </preferences>
    <tools>
-      <pins name="Pins" version="4.1" enabled="true" update_project_code="true">
+      <pins name="Pins" version="4.1" enabled="true" update_project_code="false">
          <pins_profile>
             <processor_version>4.0.1</processor_version>
             <pin_labels>
@@ -121,10 +121,10 @@
                   <clock_source id="RTC.RTC32kHz.outFreq" value="32.768 kHz" locked="false" enabled="true"/>
                </clock_sources>
                <clock_outputs>
-                  <clock_output id="Bus_clock.outFreq" value="50 MHz" locked="false" accuracy=""/>
-                  <clock_output id="Core_clock.outFreq" value="100 MHz" locked="false" accuracy=""/>
-                  <clock_output id="Flash_clock.outFreq" value="25 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FlexBus_clock.outFreq" value="50 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Bus_clock.outFreq" value="60 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Core_clock.outFreq" value="120 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Flash_clock.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FlexBus_clock.outFreq" value="40 MHz" locked="false" accuracy=""/>
                   <clock_output id="IRC48MCLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
                   <clock_output id="LPO_clock.outFreq" value="1 kHz" locked="false" accuracy=""/>
                   <clock_output id="MCGFFCLK.outFreq" value="125 kHz" locked="false" accuracy=""/>
@@ -132,7 +132,7 @@
                   <clock_output id="PLLFLLCLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
                   <clock_output id="RTC_CLKOUT.outFreq" value="1 Hz" locked="false" accuracy=""/>
                   <clock_output id="SDHCCLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
-                  <clock_output id="System_clock.outFreq" value="100 MHz" locked="false" accuracy=""/>
+                  <clock_output id="System_clock.outFreq" value="120 MHz" locked="false" accuracy=""/>
                   <clock_output id="USB48MCLK.outFreq" value="48 MHz" locked="true" accuracy="0.001"/>
                </clock_outputs>
                <clock_settings>
@@ -141,7 +141,7 @@
                   <setting id="MCG.IREFS.sel" value="MCG.FRDIV" locked="false"/>
                   <setting id="MCG.PLLS.sel" value="MCG.PLL" locked="false"/>
                   <setting id="MCG.PRDIV.scale" value="4" locked="true"/>
-                  <setting id="MCG.VDIV.scale" value="25" locked="true"/>
+                  <setting id="MCG.VDIV.scale" value="30" locked="true"/>
                   <setting id="MCG_C2_OSC_MODE_CFG" value="ModeOscLowPower" locked="false"/>
                   <setting id="MCG_C2_RANGE0_CFG" value="Very_high" locked="false"/>
                   <setting id="MCG_C2_RANGE0_FRDIV_CFG" value="Very_high" locked="false"/>
@@ -153,7 +153,8 @@
                   <setting id="SDHCClkConfig" value="yes" locked="false"/>
                   <setting id="SIM.OUTDIV1.scale" value="1" locked="true"/>
                   <setting id="SIM.OUTDIV2.scale" value="2" locked="true"/>
-                  <setting id="SIM.OUTDIV4.scale" value="4" locked="false"/>
+                  <setting id="SIM.OUTDIV3.scale" value="3" locked="false"/>
+                  <setting id="SIM.OUTDIV4.scale" value="5" locked="false"/>
                   <setting id="SIM.PLLFLLSEL.sel" value="IRC48M.IRC48MCLK" locked="false"/>
                   <setting id="SIM.SDHCSRCSEL.sel" value="SIM.PLLFLLSEL" locked="false"/>
                   <setting id="SIM.USBSRCSEL.sel" value="SIM.USBDIV" locked="false"/>
@@ -163,7 +164,7 @@
             </clock_configuration>
          </clock_configurations>
       </clocks>
-      <periphs name="Peripherals" version="4.1" enabled="true" update_project_code="true">
+      <periphs name="Peripherals" version="4.1" enabled="true" update_project_code="false">
          <dependencies>
             <dependency resourceType="SWComponent" resourceId="platform.drivers.flexcan" description="FLEXCAN Driver not found in the toolchain/IDE project." problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
@@ -206,47 +207,22 @@
                   </dependency>
                </dependencies>
                <instances>
-                  <instance name="FlexCAN_1" type="flexcan" type_id="flexcan_ba45456ec815807245205237e2bf425b" mode="interrupts" peripheral="CAN0" enabled="true">
-                     <config_set name="interruptsCfg">
-                        <setting name="messageBufferIrqs" value="0"/>
-                        <set name="interruptsEnable">
-                           <selected/>
-                        </set>
-                        <setting name="enable_ored_mb_irq" value="false"/>
-                        <struct name="interrupt_ored_mb">
-                           <setting name="IRQn" value="CAN0_ORed_Message_buffer_IRQn"/>
-                           <setting name="enable_priority" value="false"/>
-                           <setting name="enable_custom_name" value="false"/>
-                        </struct>
-                        <setting name="enable_busoff_irq" value="false"/>
-                        <struct name="interrupt_busoff">
-                           <setting name="IRQn" value="CAN0_Bus_Off_IRQn"/>
-                           <setting name="enable_priority" value="false"/>
-                           <setting name="enable_custom_name" value="false"/>
-                        </struct>
-                        <setting name="enable_error_irq" value="false"/>
-                        <struct name="interrupt_error">
-                           <setting name="IRQn" value="CAN0_Error_IRQn"/>
-                           <setting name="enable_priority" value="false"/>
-                           <setting name="enable_custom_name" value="false"/>
-                        </struct>
-                        <setting name="enable_tx_irq" value="false"/>
-                        <struct name="interrupt_tx">
-                           <setting name="IRQn" value="CAN0_Tx_Warning_IRQn"/>
-                           <setting name="enable_priority" value="false"/>
-                           <setting name="enable_custom_name" value="false"/>
-                        </struct>
-                        <setting name="enable_rx_irq" value="false"/>
-                        <struct name="interrupt_rx">
-                           <setting name="IRQn" value="CAN0_Rx_Warning_IRQn"/>
-                           <setting name="enable_priority" value="false"/>
-                           <setting name="enable_custom_name" value="false"/>
-                        </struct>
-                        <setting name="enable_wakeup_irq" value="false"/>
-                        <struct name="interrupt_wakeup">
-                           <setting name="IRQn" value="CAN0_Wake_Up_IRQn"/>
-                           <setting name="enable_priority" value="false"/>
-                           <setting name="enable_custom_name" value="false"/>
+                  <instance name="FlexCAN_1" type="flexcan" type_id="flexcan_ba45456ec815807245205237e2bf425b" mode="transfer" peripheral="CAN0" enabled="true">
+                     <config_set name="transferCfg">
+                        <struct name="transfer">
+                           <setting name="init_rx_transfer" value="false"/>
+                           <struct name="rx_transfer">
+                              <setting name="frame" value="FrameRx"/>
+                              <setting name="mbIdx" value="0"/>
+                           </struct>
+                           <setting name="init_tx_transfer" value="false"/>
+                           <struct name="tx_transfer">
+                              <setting name="frame" value="FrameTx"/>
+                              <setting name="mbIdx" value="1"/>
+                           </struct>
+                           <setting name="init_callback" value="true"/>
+                           <setting name="callback_fcn" value="flexcanCallback"/>
+                           <setting name="user_data" value=""/>
                         </struct>
                      </config_set>
                      <config_set name="fsl_flexcan">
@@ -254,14 +230,14 @@
                            <setting name="clockSource" value="kFLEXCAN_ClkSrcOsc"/>
                            <setting name="clockSourceFreq" value="BOARD_BootClockRUN"/>
                            <setting name="baudRate" value="500000"/>
-                           <setting name="maxMbNum" value="16"/>
+                           <setting name="maxMbNum" value="10"/>
                            <setting name="enableLoopBack" value="false"/>
                            <setting name="enableSelfWakeup" value="false"/>
                            <setting name="enableIndividMask" value="false"/>
                            <struct name="timingConfig">
-                              <setting name="propSeg" value="2"/>
-                              <setting name="phaseSeg1" value="4"/>
-                              <setting name="phaseSeg2" value="3"/>
+                              <setting name="propSeg" value="4"/>
+                              <setting name="phaseSeg1" value="6"/>
+                              <setting name="phaseSeg2" value="5"/>
                               <setting name="rJumpwidth" value="2"/>
                               <struct name="bitTime"/>
                            </struct>

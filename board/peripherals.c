@@ -30,13 +30,6 @@ component:
  **********************************************************************************************************************/
 #include "peripherals.h"
 
-uint32_t g_rxFifoFilters[] = {
-    FLEXCAN_RX_FIFO_STD_FILTER_TYPE_A(0x00, 0, 0),
-    FLEXCAN_RX_FIFO_STD_FILTER_TYPE_A(0x01, 0, 0),
-    FLEXCAN_RX_FIFO_STD_FILTER_TYPE_A(0x02, 0, 0),
-    FLEXCAN_RX_FIFO_STD_FILTER_TYPE_A(0x03, 0, 0)
-};
-
 /***********************************************************************************************************************
  * BOARD_InitPeripherals functional group
  **********************************************************************************************************************/
@@ -48,57 +41,37 @@ uint32_t g_rxFifoFilters[] = {
 instance:
 - name: 'FlexCAN_1'
 - type: 'flexcan'
-- mode: 'interrupts'
+- mode: 'transfer'
 - type_id: 'flexcan_ba45456ec815807245205237e2bf425b'
 - functional_group: 'BOARD_InitPeripherals'
 - peripheral: 'CAN0'
 - config_sets:
-  - interruptsCfg:
-    - messageBufferIrqs: '0'
-    - interruptsEnable: ''
-    - enable_ored_mb_irq: 'false'
-    - interrupt_ored_mb:
-      - IRQn: 'CAN0_ORed_Message_buffer_IRQn'
-      - enable_priority: 'false'
-      - enable_custom_name: 'false'
-    - enable_busoff_irq: 'false'
-    - interrupt_busoff:
-      - IRQn: 'CAN0_Bus_Off_IRQn'
-      - enable_priority: 'false'
-      - enable_custom_name: 'false'
-    - enable_error_irq: 'false'
-    - interrupt_error:
-      - IRQn: 'CAN0_Error_IRQn'
-      - enable_priority: 'false'
-      - enable_custom_name: 'false'
-    - enable_tx_irq: 'false'
-    - interrupt_tx:
-      - IRQn: 'CAN0_Tx_Warning_IRQn'
-      - enable_priority: 'false'
-      - enable_custom_name: 'false'
-    - enable_rx_irq: 'false'
-    - interrupt_rx:
-      - IRQn: 'CAN0_Rx_Warning_IRQn'
-      - enable_priority: 'false'
-      - enable_custom_name: 'false'
-    - enable_wakeup_irq: 'false'
-    - interrupt_wakeup:
-      - IRQn: 'CAN0_Wake_Up_IRQn'
-      - enable_priority: 'false'
-      - enable_custom_name: 'false'
+  - transferCfg:
+    - transfer:
+      - init_rx_transfer: 'false'
+      - rx_transfer:
+        - frame: 'FrameRx'
+        - mbIdx: '0'
+      - init_tx_transfer: 'false'
+      - tx_transfer:
+        - frame: 'FrameTx'
+        - mbIdx: '1'
+      - init_callback: 'true'
+      - callback_fcn: 'flexcanCallback'
+      - user_data: ''
   - fsl_flexcan:
     - can_config:
       - clockSource: 'kFLEXCAN_ClkSrcOsc'
       - clockSourceFreq: 'BOARD_BootClockRUN'
       - baudRate: '500000'
-      - maxMbNum: '16'
+      - maxMbNum: '10'
       - enableLoopBack: 'false'
       - enableSelfWakeup: 'false'
       - enableIndividMask: 'false'
       - timingConfig:
-        - propSeg: '2'
-        - phaseSeg1: '4'
-        - phaseSeg2: '3'
+        - propSeg: '4'
+        - phaseSeg1: '6'
+        - phaseSeg2: '5'
         - rJumpwidth: '2'
         - bitTime: []
     - enableRxFIFO: 'true'
@@ -127,42 +100,40 @@ instance:
 const flexcan_config_t FlexCAN_1_config = {
   .clkSrc = kFLEXCAN_ClkSrcOsc,
   .baudRate = 500000,
-  .maxMbNum = 16,
+  .maxMbNum = 10,
   .enableLoopBack = false,
   .enableSelfWakeup = false,
   .enableIndividMask = false,
   .timingConfig = {
-    .propSeg = 1,
-    .phaseSeg1 = 3,
-    .phaseSeg2 = 2,
+    .propSeg = 3,
+    .phaseSeg1 = 5,
+    .phaseSeg2 = 4,
     .rJumpwidth = 1
   }
 };
 /* Message buffer 9 configuration structure */
 const flexcan_rx_mb_config_t FlexCAN_1_rx_mb_config_9 = {
-  .id = 0x00,
+  .id = 0,
   .format = kFLEXCAN_FrameFormatStandard,
   .type = kFLEXCAN_FrameTypeData
 };
 flexcan_rx_fifo_config_t FlexCAN_1_rx_fifo_config = {
   .idFilterNum = 0,
   .idFilterType = kFLEXCAN_RxFifoFilterTypeA,
-  .priority = kFLEXCAN_RxFifoPrioLow
+  .priority = kFLEXCAN_RxFifoPrioHigh
 };
+flexcan_handle_t FlexCAN_1_handle;
 
 void FlexCAN_1_init(void) {
   FLEXCAN_Init(FLEXCAN_1_PERIPHERAL, &FlexCAN_1_config, FLEXCAN_1_CLOCK_SOURCE);
 
-  FLEXCAN_SetRxFifoGlobalMask(FLEXCAN_1_PERIPHERAL, 0x03);
-  FlexCAN_1_rx_fifo_config.idFilterTable = g_rxFifoFilters;
-  FlexCAN_1_rx_fifo_config.idFilterNum = sizeof(g_rxFifoFilters) / sizeof(g_rxFifoFilters[0]);
+  FlexCAN_1_rx_fifo_config.idFilterTable = g_flexcanRxFilters;
   FLEXCAN_SetRxFifoConfig(FLEXCAN_1_PERIPHERAL, &FlexCAN_1_rx_fifo_config, true);
-
   /* Message buffer 9 initialization */
   FLEXCAN_SetRxMbConfig(FLEXCAN_1_PERIPHERAL, 9, &FlexCAN_1_rx_mb_config_9, true);
-  FLEXCAN_SetRxMbGlobalMask(FLEXCAN_1_PERIPHERAL, 0x00);
   /* Message buffer 8 initialization */
   FLEXCAN_SetTxMbConfig(FLEXCAN_1_PERIPHERAL, 8, true);
+  FLEXCAN_TransferCreateHandle(FLEXCAN_1_PERIPHERAL, &FlexCAN_1_handle, flexcanCallback, NULL);
 }
 
 /***********************************************************************************************************************

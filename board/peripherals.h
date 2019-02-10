@@ -34,6 +34,13 @@ extern const flexcan_config_t FlexCAN_1_config;
 extern const flexcan_rx_mb_config_t FlexCAN_1_rx_mb_config_9;
 extern flexcan_rx_fifo_config_t FlexCAN_1_rx_fifo_config;
 extern void * g_flexcanRxFilters;
+extern flexcan_handle_t FlexCAN_1_handle;
+
+/***********************************************************************************************************************
+ * Callback functions
+ **********************************************************************************************************************/
+/* FlexCAN transfer callback function for the FlexCAN_1 component (init. function BOARD_InitPeripherals)*/
+extern void flexcanCallback(CAN_Type *, flexcan_handle_t *, status_t , uint32_t , void *);
 
 /***********************************************************************************************************************
  * Initialization functions

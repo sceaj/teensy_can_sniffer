@@ -55,10 +55,25 @@ static const sdmmchost_detect_card_t s_sdCardDetect = {
 
 static char logBuffer[128];
 static char* logBufferNext;
+
+static uint32_t rxFilters[] = {
+    FLEXCAN_RX_FIFO_STD_FILTER_TYPE_A(0x242, 0, 0),
+    FLEXCAN_RX_FIFO_STD_FILTER_TYPE_A(0x245, 0, 0),
+    FLEXCAN_RX_FIFO_STD_FILTER_TYPE_A(0x246, 0, 0),
+    FLEXCAN_RX_FIFO_STD_FILTER_TYPE_A(0x441, 0, 0)
+};
+void* g_flexcanRxFilters;
+volatile bool rxFifoAvl = false;
+volatile bool rxFifoOverflow = false;
+volatile bool rxFifoWarning = false;
 static flexcan_frame_t rxFrame;
 static flexcan_frame_t txFrame;
+static flexcan_fifo_transfer_t fifoTransfer;
 static uint32_t dataCount;
 static uint32_t remoteCount;
+
+#define FRAMEID_TO_STD_ID(x) ((uint16_t)(x / 0x40000U))
+
 
 static void delay(uint32_t delay_ms)
 {
@@ -86,9 +101,9 @@ status_t initSDcard(void)
 
 void logCanData(flexcan_frame_t* canFrame) {
 	if (canFrame->type == kFLEXCAN_FrameTypeData) {
-        appendLog("$CAN,%d,%04x,%02x,%02x,%02x,%02x,%02x,%02x,%02x,%02x\n",
-        		canFrame->length,
-        		canFrame->id,
+		uint16_t stdId = FRAMEID_TO_STD_ID(canFrame->id);
+        appendLog("$CAN,%03X,%02X,%02X,%02X,%02X,%02X,%02X,%02X,%02X\n",
+				stdId,
 				canFrame->dataByte0,
 				canFrame->dataByte1,
 				canFrame->dataByte2,
@@ -106,22 +121,25 @@ void logCanData(flexcan_frame_t* canFrame) {
 void sendCanTestFrame() {
 	txFrame.format = kFLEXCAN_FrameFormatStandard;
 	txFrame.type   = kFLEXCAN_FrameTypeData;
-	txFrame.id     = FLEXCAN_ID_STD(0x455);
+	txFrame.id     = FLEXCAN_ID_STD(0x7DF);
 	txFrame.length = 8;
-	txFrame.dataWord0 = CAN_WORD0_DATA_BYTE_0(0x10) |
-	                    CAN_WORD0_DATA_BYTE_1(0x21) |
-	                    CAN_WORD0_DATA_BYTE_2(0x32) |
-	                    CAN_WORD0_DATA_BYTE_3(0x43);
-	txFrame.dataWord1 = CAN_WORD1_DATA_BYTE_4(0x54) |
-	                    CAN_WORD1_DATA_BYTE_5(0x65) |
-	                    CAN_WORD1_DATA_BYTE_6(0x80) |
-	                    CAN_WORD1_DATA_BYTE_7(0xF5);
-	/* Writes a transmit message buffer to send a CAN Message. */
-	FLEXCAN_WriteTxMb(FLEXCAN_1_PERIPHERAL, 8, &txFrame);
-	/* Waits until the transmit message buffer is empty. */
-	while (!FLEXCAN_GetMbStatusFlags(FLEXCAN_1_PERIPHERAL, 1 << 8));
-	/* Cleans the transmit message buffer empty status. */
-	FLEXCAN_ClearMbStatusFlags(FLEXCAN_1_PERIPHERAL, 1 << 8);
+	txFrame.dataWord0 = CAN_WORD0_DATA_BYTE_0(0x02) |
+	                    CAN_WORD0_DATA_BYTE_1(0x01) |
+	                    CAN_WORD0_DATA_BYTE_2(0x0C) |
+	                    CAN_WORD0_DATA_BYTE_3(0x00);
+	txFrame.dataWord1 = CAN_WORD1_DATA_BYTE_4(0x55) |
+	                    CAN_WORD1_DATA_BYTE_5(0xCC) |
+	                    CAN_WORD1_DATA_BYTE_6(0x55) |
+	                    CAN_WORD1_DATA_BYTE_7(0xCC);
+	FLEXCAN_TransferSendBlocking(FLEXCAN_1_PERIPHERAL, 8, &txFrame);
+}
+
+
+void flexcanCallback(CAN_Type *base, flexcan_handle_t *handle, status_t status, uint32_t reason, void *userData)
+{
+	rxFifoAvl = (kStatus_FLEXCAN_RxFifoIdle == status);
+	if (kStatus_FLEXCAN_RxFifoOverflow == status) rxFifoOverflow = true;
+	if (kStatus_FLEXCAN_RxFifoWarning == status) rxFifoWarning = true;
 }
 
 /*
@@ -131,6 +149,8 @@ int main(void) {
   	/* Init board hardware. */
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
+    g_flexcanRxFilters = rxFilters;
+    FlexCAN_1_rx_fifo_config.idFilterNum = 4;
     BOARD_InitBootPeripherals();
   	/* Init FSL debug console. */
 	BOARD_InitDebugConsole();
@@ -159,39 +179,48 @@ int main(void) {
 
     /* Force the counter to be placed into memory. */
     volatile static int i = 0;
+    int j = 0;
     logBufferNext = logBuffer;
     /* Enter an infinite loop, just incrementing a counter. */
-    while (i < 1000000) {
-    	if (FLEXCAN_GetMbStatusFlags(FLEXCAN_1_PERIPHERAL, kFLEXCAN_RxFifoFrameAvlFlag)) {
-    		do {
-        		/* Reads the message from the receive FIFO. */
-        		FLEXCAN_ReadRxFifo(FLEXCAN_1_PERIPHERAL, &rxFrame);
-        		logCanData(&rxFrame);
-        		/* Cleans the receive FIFO available status. */
-        		FLEXCAN_ClearMbStatusFlags(FLEXCAN_1_PERIPHERAL, kFLEXCAN_RxFifoFrameAvlFlag);
-    		} while (FLEXCAN_GetMbStatusFlags(FLEXCAN_1_PERIPHERAL, kFLEXCAN_RxFifoFrameAvlFlag));
-    	} else if (FLEXCAN_GetMbStatusFlags(FLEXCAN_1_PERIPHERAL, 1 << 9)) {
-    		/* Reads the received message from the receive message buffer. */
-    		FLEXCAN_ReadRxMb(FLEXCAN_1_PERIPHERAL, 9, &rxFrame);
+    fifoTransfer.frame = &rxFrame;
+	FLEXCAN_TransferReceiveFifoNonBlocking(FLEXCAN_1_PERIPHERAL, &FlexCAN_1_handle, &fifoTransfer);
+    while (1) {
+    	if (rxFifoAvl) {
     		logCanData(&rxFrame);
-    		/* Cleans the receive message buffer full status. */
-    		FLEXCAN_ClearMbStatusFlags(FLEXCAN_1_PERIPHERAL, 1 << 9);
-    	} else {
-    		delay(5U);
+    	    /* Wait until Rx FIFO non-empty. */
+    	    while (FLEXCAN_GetMbStatusFlags(FLEXCAN_1_PERIPHERAL, kFLEXCAN_RxFifoFrameAvlFlag)) {
+        	    FLEXCAN_ReadRxFifo(FLEXCAN_1_PERIPHERAL, &rxFrame);
+        	    FLEXCAN_ClearMbStatusFlags(FLEXCAN_1_PERIPHERAL, kFLEXCAN_RxFifoFrameAvlFlag);
+        		logCanData(&rxFrame);
+    	    }
+    		rxFifoAvl = false;
+    		FLEXCAN_TransferReceiveFifoNonBlocking(FLEXCAN_1_PERIPHERAL, &FlexCAN_1_handle, &fifoTransfer);
     	}
 
         i++ ;
-        if ((i % 1000) == 0) {
+        if ((i % 0x100000) == 0) {
+        	if (rxFifoWarning) {
+        		PRINTF("Fifo WARNING detected!\r\n");
+        		rxFifoWarning = false;
+        	} else if (rxFifoOverflow) {
+        		PRINTF("Fifo OVERFLOW detected!\r\n");
+        		rxFifoOverflow = false;
+        	}
             PRINTF("Iter: %d; Frames: %d\r\n", i, dataCount);
         	// Flash the led...
-        	if ((i / 1000) & 0x01) {
+        	if ((i / 0x100000) & 0x01) {
             	GPIO_PinWrite(GPIOC, 5U, 1);
         	} else {
             	GPIO_PinWrite(GPIOC, 5U, 0);
         	}
-        	PRINTF("Sending CAN Frame...\r\n");
-        	sendCanTestFrame();
+        	j++;
         }
+
+//        if ((j % 10) == 0) {
+//        	PRINTF("Sending CAN Frame...\r\n");
+//        	sendCanTestFrame();
+//        	j++;
+//        }
     }
 
     FLEXCAN_Enable(FLEXCAN_1_PERIPHERAL, false);

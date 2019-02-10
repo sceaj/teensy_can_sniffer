@@ -131,10 +131,10 @@ void BOARD_InitBootClocks(void)
 name: BOARD_BootClockRUN
 called_from_default_init: true
 outputs:
-- {id: Bus_clock.outFreq, value: 50 MHz}
-- {id: Core_clock.outFreq, value: 100 MHz}
-- {id: Flash_clock.outFreq, value: 25 MHz}
-- {id: FlexBus_clock.outFreq, value: 50 MHz}
+- {id: Bus_clock.outFreq, value: 60 MHz}
+- {id: Core_clock.outFreq, value: 120 MHz}
+- {id: Flash_clock.outFreq, value: 24 MHz}
+- {id: FlexBus_clock.outFreq, value: 40 MHz}
 - {id: IRC48MCLK.outFreq, value: 48 MHz}
 - {id: LPO_clock.outFreq, value: 1 kHz}
 - {id: MCGFFCLK.outFreq, value: 125 kHz}
@@ -142,7 +142,7 @@ outputs:
 - {id: PLLFLLCLK.outFreq, value: 48 MHz}
 - {id: RTC_CLKOUT.outFreq, value: 1 Hz}
 - {id: SDHCCLK.outFreq, value: 48 MHz}
-- {id: System_clock.outFreq, value: 100 MHz}
+- {id: System_clock.outFreq, value: 120 MHz}
 - {id: USB48MCLK.outFreq, value: 48 MHz, locked: true, accuracy: '0.001'}
 settings:
 - {id: MCGMode, value: PEE}
@@ -150,7 +150,7 @@ settings:
 - {id: MCG.IREFS.sel, value: MCG.FRDIV}
 - {id: MCG.PLLS.sel, value: MCG.PLL}
 - {id: MCG.PRDIV.scale, value: '4', locked: true}
-- {id: MCG.VDIV.scale, value: '25', locked: true}
+- {id: MCG.VDIV.scale, value: '30', locked: true}
 - {id: MCG_C2_OSC_MODE_CFG, value: ModeOscLowPower}
 - {id: MCG_C2_RANGE0_CFG, value: Very_high}
 - {id: MCG_C2_RANGE0_FRDIV_CFG, value: Very_high}
@@ -162,7 +162,8 @@ settings:
 - {id: SDHCClkConfig, value: 'yes'}
 - {id: SIM.OUTDIV1.scale, value: '1', locked: true}
 - {id: SIM.OUTDIV2.scale, value: '2', locked: true}
-- {id: SIM.OUTDIV4.scale, value: '4'}
+- {id: SIM.OUTDIV3.scale, value: '3'}
+- {id: SIM.OUTDIV4.scale, value: '5'}
 - {id: SIM.PLLFLLSEL.sel, value: IRC48M.IRC48MCLK}
 - {id: SIM.SDHCSRCSEL.sel, value: SIM.PLLFLLSEL}
 - {id: SIM.USBSRCSEL.sel, value: SIM.USBDIV}
@@ -191,14 +192,14 @@ const mcg_config_t mcgConfig_BOARD_BootClockRUN =
             {
                 .enableMode = MCG_PLL_DISABLE,    /* MCGPLLCLK disabled */
                 .prdiv = 0x3U,                    /* PLL Reference divider: divided by 4 */
-                .vdiv = 0x1U,                     /* VCO divider: multiplied by 25 */
+                .vdiv = 0x6U,                     /* VCO divider: multiplied by 30 */
             },
     };
 const sim_clock_config_t simConfig_BOARD_BootClockRUN =
     {
         .pllFllSel = SIM_PLLFLLSEL_IRC48MCLK_CLK, /* PLLFLL select: IRC48MCLK clock */
         .er32kSrc = SIM_OSC32KSEL_OSC32KCLK_CLK,  /* OSC32KSEL select: OSC32KCLK clock */
-        .clkdiv1 = 0x1130000U,                    /* SIM_CLKDIV1 - OUTDIV1: /1, OUTDIV2: /2, OUTDIV3: /2, OUTDIV4: /4 */
+        .clkdiv1 = 0x1240000U,                    /* SIM_CLKDIV1 - OUTDIV1: /1, OUTDIV2: /2, OUTDIV3: /3, OUTDIV4: /5 */
     };
 const osc_config_t oscConfig_BOARD_BootClockRUN =
     {
