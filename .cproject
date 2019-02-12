@@ -82,8 +82,8 @@
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.undef.symbol.1972563689" name="Undefined symbols (-U)" superClass="gnu.c.compiler.option.preprocessor.undef.symbol"/>
 								<option id="gnu.c.compiler.option.include.paths.935773096" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="../CMSIS"/>
 									<listOptionValue builtIn="false" value="../drivers"/>
+									<listOptionValue builtIn="false" value="../CMSIS"/>
 									<listOptionValue builtIn="false" value="../usb/device/include"/>
 									<listOptionValue builtIn="false" value="../usb/device/source"/>
 									<listOptionValue builtIn="false" value="../utilities"/>
@@ -134,8 +134,8 @@
 								<option id="com.crt.advproject.gas.arch.1547983259" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm4" valueType="enumerated"/>
 								<option id="gnu.both.asm.option.flags.crt.409036218" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -D__REDLIB__" valueType="string"/>
 								<option id="gnu.both.asm.option.include.paths.470768688" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="../CMSIS"/>
 									<listOptionValue builtIn="false" value="../drivers"/>
+									<listOptionValue builtIn="false" value="../CMSIS"/>
 									<listOptionValue builtIn="false" value="../usb/device/include"/>
 									<listOptionValue builtIn="false" value="../usb/device/source"/>
 									<listOptionValue builtIn="false" value="../utilities"/>
@@ -150,6 +150,8 @@
 									<listOptionValue builtIn="false" value="../startup"/>
 									<listOptionValue builtIn="false" value="../sdmmc/inc"/>
 									<listOptionValue builtIn="false" value="../sdmmc/port"/>
+									<listOptionValue builtIn="false" value="c:/usr/local/nxp/mcuxpressoide_10.2.1_795/ide/tools/redlib/include"/>
+									<listOptionValue builtIn="false" value="c:/usr/local/nxp/mcuxpressoide_10.2.1_795/ide/tools/features/include"/>
 									<listOptionValue builtIn="false" value="/Applications/MCUXpressoIDE_10.2.0_759/ide/tools/redlib/include"/>
 									<listOptionValue builtIn="false" value="/Applications/MCUXpressoIDE_10.2.0_759/ide/tools/features/include"/>
 								</option>
@@ -268,10 +270,10 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
+						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="drivers"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="usb"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="utilities"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="osa"/>
-						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="drivers"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="CMSIS"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="board"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="fatfs"/>
@@ -360,8 +362,8 @@
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.undef.symbol.61492198" name="Undefined symbols (-U)" superClass="gnu.c.compiler.option.preprocessor.undef.symbol"/>
 								<option id="gnu.c.compiler.option.include.paths.1291070301" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="../CMSIS"/>
 									<listOptionValue builtIn="false" value="../drivers"/>
+									<listOptionValue builtIn="false" value="../CMSIS"/>
 									<listOptionValue builtIn="false" value="../usb/device/include"/>
 									<listOptionValue builtIn="false" value="../usb/device/source"/>
 									<listOptionValue builtIn="false" value="../utilities"/>
@@ -376,10 +378,10 @@
 									<listOptionValue builtIn="false" value="../startup"/>
 									<listOptionValue builtIn="false" value="../sdmmc/inc"/>
 									<listOptionValue builtIn="false" value="../sdmmc/port"/>
-									<listOptionValue builtIn="false" value="/Applications/MCUXpressoIDE_10.2.0_759/ide/tools/redlib/include"/>
-									<listOptionValue builtIn="false" value="/Applications/MCUXpressoIDE_10.2.0_759/ide/tools/features/include"/>
 									<listOptionValue builtIn="false" value="c:/usr/local/nxp/mcuxpressoide_10.2.1_795/ide/tools/redlib/include"/>
 									<listOptionValue builtIn="false" value="c:/usr/local/nxp/mcuxpressoide_10.2.1_795/ide/tools/features/include"/>
+									<listOptionValue builtIn="false" value="/Applications/MCUXpressoIDE_10.2.0_759/ide/tools/redlib/include"/>
+									<listOptionValue builtIn="false" value="/Applications/MCUXpressoIDE_10.2.0_759/ide/tools/features/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/sdmmc/inc}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.include.files.1682903505" name="Include files (-include)" superClass="gnu.c.compiler.option.include.files"/>
@@ -417,8 +419,8 @@
 								<option id="com.crt.advproject.gas.arch.384039720" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm4" valueType="enumerated"/>
 								<option id="gnu.both.asm.option.flags.crt.1282410034" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -D__REDLIB__" valueType="string"/>
 								<option id="gnu.both.asm.option.include.paths.719490654" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="../CMSIS"/>
 									<listOptionValue builtIn="false" value="../drivers"/>
+									<listOptionValue builtIn="false" value="../CMSIS"/>
 									<listOptionValue builtIn="false" value="../usb/device/include"/>
 									<listOptionValue builtIn="false" value="../usb/device/source"/>
 									<listOptionValue builtIn="false" value="../utilities"/>
@@ -433,10 +435,10 @@
 									<listOptionValue builtIn="false" value="../startup"/>
 									<listOptionValue builtIn="false" value="../sdmmc/inc"/>
 									<listOptionValue builtIn="false" value="../sdmmc/port"/>
-									<listOptionValue builtIn="false" value="/Applications/MCUXpressoIDE_10.2.0_759/ide/tools/redlib/include"/>
-									<listOptionValue builtIn="false" value="/Applications/MCUXpressoIDE_10.2.0_759/ide/tools/features/include"/>
 									<listOptionValue builtIn="false" value="c:/usr/local/nxp/mcuxpressoide_10.2.1_795/ide/tools/redlib/include"/>
 									<listOptionValue builtIn="false" value="c:/usr/local/nxp/mcuxpressoide_10.2.1_795/ide/tools/features/include"/>
+									<listOptionValue builtIn="false" value="/Applications/MCUXpressoIDE_10.2.0_759/ide/tools/redlib/include"/>
+									<listOptionValue builtIn="false" value="/Applications/MCUXpressoIDE_10.2.0_759/ide/tools/features/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/sdmmc/inc}&quot;"/>
 								</option>
 								<option id="gnu.both.asm.option.warnings.nowarn.1771360970" name="Suppress warnings (-W)" superClass="gnu.both.asm.option.warnings.nowarn"/>
@@ -554,10 +556,10 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
+						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="drivers"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="usb"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="utilities"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="osa"/>
-						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="drivers"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="CMSIS"/>
 						<entry flags="LOCAL|VALUE_WORKSPACE_PATH" kind="sourcePath" name="board"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="fatfs"/>
@@ -593,7 +595,10 @@
 		<projectStorage>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#13;
 &lt;TargetConfig&gt;&#13;
 &lt;Properties property_3="NXP" property_4="MK64FX512xxx12" property_count="5" version="100200"/&gt;&#13;
-&lt;infoList vendor="NXP"&gt;&lt;info chip="MK64FX512xxx12" name="MK64FX512xxx12"&gt;&lt;chip&gt;&lt;name&gt;MK64FX512xxx12&lt;/name&gt;&#13;
+&lt;infoList vendor="NXP"&gt;&#13;
+&lt;info chip="MK64FX512xxx12" name="MK64FX512xxx12"&gt;&#13;
+&lt;chip&gt;&#13;
+&lt;name&gt;MK64FX512xxx12&lt;/name&gt;&#13;
 &lt;family&gt;K6x&lt;/family&gt;&#13;
 &lt;vendor&gt;NXP&lt;/vendor&gt;&#13;
 &lt;memory can_program="true" id="Flash" is_ro="true" size="512" type="Flash"/&gt;&#13;
@@ -676,7 +681,8 @@
 &lt;peripheralInstance derived_from="MCM" determined="infoFile" id="MCM" location="0xE0080000"/&gt;&#13;
 &lt;peripheralInstance derived_from="CAU" determined="infoFile" id="CAU" location="0xE0081000"/&gt;&#13;
 &lt;/chip&gt;&#13;
-&lt;processor&gt;&lt;name gcc_name="cortex-m4"&gt;Cortex-M4&lt;/name&gt;&#13;
+&lt;processor&gt;&#13;
+&lt;name gcc_name="cortex-m4"&gt;Cortex-M4&lt;/name&gt;&#13;
 &lt;family&gt;Cortex-M&lt;/family&gt;&#13;
 &lt;/processor&gt;&#13;
 &lt;link href="MK64F12_internal_peripheral.xml" show="embed" type="simple"/&gt;&#13;
@@ -687,7 +693,7 @@
 	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
 		<sdkName>SDK_2.x_MK64FX512xxx12</sdkName>
 		<sdkVersion>2.4.2</sdkVersion>
-		<sdkComponents>middleware.baremetal.MK64F12;platform.drivers.uart.MK64F12;platform.Include_common.MK64F12;platform.Include_core_cm4.MK64F12;platform.devices.MK64F12_CMSIS.MK64F12;platform.drivers.clock.MK64F12;platform.drivers.common.MK64F12;platform.utilities.virtual_com.MK64F12;middleware.usb.device.MK64F12;middleware.usb.device_controller_khci.MK64F12;platform.devices.MK64F12_startup.MK64F12;platform.drivers.sysmpu.MK64F12;platform.utilities.debug_console.MK64F12;platform.drivers.rtc.MK64F12;platform.drivers.dspi.MK64F12;platform.drivers.sdhc.MK64F12;platform.drivers.port.MK64F12;platform.drivers.gpio.MK64F12;platform.drivers.flexcan.MK64F12;</sdkComponents>
+		<sdkComponents>middleware.baremetal.MK64F12;platform.drivers.uart.MK64F12;platform.Include_common.MK64F12;platform.Include_core_cm4.MK64F12;platform.devices.MK64F12_CMSIS.MK64F12;platform.drivers.clock.MK64F12;platform.drivers.common.MK64F12;platform.utilities.virtual_com.MK64F12;middleware.usb.device.MK64F12;middleware.usb.device_controller_khci.MK64F12;platform.devices.MK64F12_startup.MK64F12;platform.drivers.sysmpu.MK64F12;platform.utilities.debug_console.MK64F12;platform.drivers.rtc.MK64F12;platform.drivers.dspi.MK64F12;platform.drivers.sdhc.MK64F12;platform.drivers.port.MK64F12;platform.drivers.gpio.MK64F12;platform.drivers.flexcan.MK64F12;platform.drivers.pit.MK64F12;</sdkComponents>
 		<package>MK64FX512VMD12</package>
 		<core>cm4</core>
 	</storageModule>
