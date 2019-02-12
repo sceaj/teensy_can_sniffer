@@ -29,7 +29,7 @@
  */
  
 /**
- * @file    virtualcom.c
+ * @file    can_sniffer.c
  * @brief   Application entry point.
  */
 #include <stdio.h>
@@ -56,6 +56,13 @@ static const sdmmchost_detect_card_t s_sdCardDetect = {
 static char logBuffer[128];
 static char* logBufferNext;
 
+// Number of frames we can buffer
+#define FLEXCAN_FIFO_BUFFER_SIZE 64
+#define FLEXCAN_FIFO_AVL (fifoReadIndex != fifoWriteIndex)
+#define FLEXCAN_FIFO_BUFFER_ADVANCE(idx) ((idx + 1) % FLEXCAN_FIFO_BUFFER_SIZE)
+#define FLEXCAN_FIFO_BUFFER_FULL (fifoReadIndex == FLEXCAN_FIFO_BUFFER_ADVANCE(fifoWriteIndex))
+
+
 static uint32_t rxFilters[] = {
     FLEXCAN_RX_FIFO_STD_FILTER_TYPE_A(0x242, 0, 0),
     FLEXCAN_RX_FIFO_STD_FILTER_TYPE_A(0x245, 0, 0),
@@ -63,10 +70,12 @@ static uint32_t rxFilters[] = {
     FLEXCAN_RX_FIFO_STD_FILTER_TYPE_A(0x441, 0, 0)
 };
 void* g_flexcanRxFilters;
-volatile bool rxFifoAvl = false;
+volatile bool rxFifoFrameBufferOverflow = false;
 volatile bool rxFifoOverflow = false;
 volatile bool rxFifoWarning = false;
-static flexcan_frame_t rxFrame;
+static flexcan_frame_t rxFifoBuffer[FLEXCAN_FIFO_BUFFER_SIZE];
+volatile int fifoReadIndex = 0;
+volatile int fifoWriteIndex = 0;
 static flexcan_frame_t txFrame;
 static flexcan_fifo_transfer_t fifoTransfer;
 static uint32_t dataCount;
@@ -137,7 +146,15 @@ void sendCanTestFrame() {
 
 void flexcanCallback(CAN_Type *base, flexcan_handle_t *handle, status_t status, uint32_t reason, void *userData)
 {
-	rxFifoAvl = (kStatus_FLEXCAN_RxFifoIdle == status);
+	if (kStatus_FLEXCAN_RxFifoIdle == status) {
+		if (FLEXCAN_FIFO_BUFFER_FULL) {
+			rxFifoFrameBufferOverflow = true;
+		} else {
+			fifoWriteIndex = FLEXCAN_FIFO_BUFFER_ADVANCE(fifoWriteIndex);
+			fifoTransfer.frame = &rxFifoBuffer[fifoWriteIndex];
+		}
+		FLEXCAN_TransferReceiveFifoNonBlocking(FLEXCAN_1_PERIPHERAL, &FlexCAN_1_handle, &fifoTransfer);
+	}
 	if (kStatus_FLEXCAN_RxFifoOverflow == status) rxFifoOverflow = true;
 	if (kStatus_FLEXCAN_RxFifoWarning == status) rxFifoWarning = true;
 }
@@ -182,24 +199,21 @@ int main(void) {
     int j = 0;
     logBufferNext = logBuffer;
     /* Enter an infinite loop, just incrementing a counter. */
-    fifoTransfer.frame = &rxFrame;
+    fifoTransfer.frame = &rxFifoBuffer[fifoWriteIndex];
 	FLEXCAN_TransferReceiveFifoNonBlocking(FLEXCAN_1_PERIPHERAL, &FlexCAN_1_handle, &fifoTransfer);
     while (1) {
-    	if (rxFifoAvl) {
-    		logCanData(&rxFrame);
-    	    /* Wait until Rx FIFO non-empty. */
-    	    while (FLEXCAN_GetMbStatusFlags(FLEXCAN_1_PERIPHERAL, kFLEXCAN_RxFifoFrameAvlFlag)) {
-        	    FLEXCAN_ReadRxFifo(FLEXCAN_1_PERIPHERAL, &rxFrame);
-        	    FLEXCAN_ClearMbStatusFlags(FLEXCAN_1_PERIPHERAL, kFLEXCAN_RxFifoFrameAvlFlag);
-        		logCanData(&rxFrame);
-    	    }
-    		rxFifoAvl = false;
-    		FLEXCAN_TransferReceiveFifoNonBlocking(FLEXCAN_1_PERIPHERAL, &FlexCAN_1_handle, &fifoTransfer);
+
+    	while (FLEXCAN_FIFO_AVL) {
+    		logCanData(&rxFifoBuffer[fifoReadIndex]);
+    		fifoReadIndex = FLEXCAN_FIFO_BUFFER_ADVANCE(fifoReadIndex);
     	}
 
         i++ ;
         if ((i % 0x100000) == 0) {
-        	if (rxFifoWarning) {
+        	if (rxFifoFrameBufferOverflow) {
+        		PRINTF("CAN fifo frame buffer is FULL!\r\n");
+        		rxFifoFrameBufferOverflow = false;
+        	} else if (rxFifoWarning) {
         		PRINTF("Fifo WARNING detected!\r\n");
         		rxFifoWarning = false;
         	} else if (rxFifoOverflow) {
