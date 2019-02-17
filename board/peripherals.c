@@ -137,12 +137,126 @@ void FlexCAN_1_init(void) {
 }
 
 /***********************************************************************************************************************
+ * PIT_1 initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'PIT_1'
+- type: 'pit'
+- mode: 'LPTMR_GENERAL'
+- type_id: 'pit_a4782ba5223c8a2527ba91aeb2bc4159'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'PIT'
+- config_sets:
+  - fsl_pit:
+    - enableRunInDebug: 'false'
+    - timingConfig:
+      - clockSource: 'BusInterfaceClock'
+      - clockSourceFreq: 'BOARD_BootClockRUN'
+    - channels:
+      - 0:
+        - channelNumber: '0'
+        - enableChain: 'false'
+        - timerPeriod: '10ms'
+        - startTimer: 'true'
+        - enableInterrupt: 'true'
+        - interrupt:
+          - IRQn: 'PIT0_IRQn'
+          - enable_priority: 'false'
+          - enable_custom_name: 'true'
+          - handler_custom_name: 'Timer_IRQ'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const pit_config_t PIT_1_config = {
+  .enableRunInDebug = false
+};
+
+void PIT_1_init(void) {
+  /* Initialize the PIT. */
+  PIT_Init(PIT_1_PERIPHERAL, &PIT_1_config);
+  /* Set channel 0 period to 10 ms (600000 ticks). */
+  PIT_SetTimerPeriod(PIT_1_PERIPHERAL, kPIT_Chnl_0, PIT_1_0_TICKS);
+  /* Enable interrupts from channel 0. */
+  PIT_EnableInterrupts(PIT_1_PERIPHERAL, kPIT_Chnl_0, kPIT_TimerInterruptEnable);
+  /* Enable interrupt PIT_1_0_IRQN request in the NVIC */
+  EnableIRQ(PIT_1_0_IRQN);
+  /* Start channel 0. */
+  PIT_StartTimer(PIT_1_PERIPHERAL, kPIT_Chnl_0);
+}
+
+/***********************************************************************************************************************
+ * ADC16_1 initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'ADC16_1'
+- type: 'adc16'
+- mode: 'ADC'
+- type_id: 'adc16_7d827be2dc433dc756d94a7ce88cbcc5'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'ADC1'
+- config_sets:
+  - fsl_adc16:
+    - adc16_config:
+      - referenceVoltageSource: 'kADC16_ReferenceVoltageSourceVref'
+      - clockSource: 'kADC16_ClockSourceAsynchronousClock'
+      - enableAsynchronousClock: 'false'
+      - clockDivider: 'kADC16_ClockDivider2'
+      - resolution: 'kADC16_ResolutionSE10Bit'
+      - longSampleMode: 'kADC16_LongSampleCycle6'
+      - enableHighSpeed: 'false'
+      - enableLowPower: 'false'
+      - enableContinuousConversion: 'false'
+    - adc16_channel_mux_mode: 'kADC16_ChannelMuxB'
+    - adc16_hardware_compare_config:
+      - hardwareCompareModeEnable: 'false'
+    - doAutoCalibration: 'false'
+    - trigger: 'false'
+    - hardwareAverageConfiguration: 'kADC16_HardwareAverageDisabled'
+    - enable_irq: 'false'
+    - adc_interrupt:
+      - IRQn: 'ADC1_IRQn'
+      - enable_priority: 'false'
+      - enable_custom_name: 'false'
+    - adc16_channels_config: []
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const adc16_config_t ADC16_1_config = {
+  .referenceVoltageSource = kADC16_ReferenceVoltageSourceVref,
+  .clockSource = kADC16_ClockSourceAsynchronousClock,
+  .enableAsynchronousClock = false,
+  .clockDivider = kADC16_ClockDivider2,
+  .resolution = kADC16_ResolutionSE10Bit,
+  .longSampleMode = kADC16_LongSampleCycle6,
+  .enableHighSpeed = false,
+  .enableLowPower = false,
+  .enableContinuousConversion = false
+};
+const adc16_channel_mux_mode_t ADC16_1_muxMode = kADC16_ChannelMuxB;
+const adc16_hardware_average_mode_t ADC16_1_hardwareAverageMode = kADC16_HardwareAverageDisabled;
+
+void ADC16_1_init(void) {
+  /* Initialize ADC16 converter */
+  ADC16_Init(ADC16_1_PERIPHERAL, &ADC16_1_config);
+  /* Make sure, that software trigger is used */
+  ADC16_EnableHardwareTrigger(ADC16_1_PERIPHERAL, false);
+  /* Configure hardware average mode */
+  ADC16_SetHardwareAverage(ADC16_1_PERIPHERAL, ADC16_1_hardwareAverageMode);
+  /* Configure channel multiplexing mode */
+  ADC16_SetChannelMuxMode(ADC16_1_PERIPHERAL, ADC16_1_muxMode);
+}
+
+/***********************************************************************************************************************
  * Initialization functions
  **********************************************************************************************************************/
 void BOARD_InitPeripherals(void)
 {
   /* Initialize components */
   FlexCAN_1_init();
+  PIT_1_init();
+  ADC16_1_init();
 }
 
 /***********************************************************************************************************************

@@ -33,7 +33,6 @@
  */
 
 #include "fsl_flexcan.h"
-#include "fsl_debug_console.h"
 
 /*******************************************************************************
  * Definitions
@@ -515,7 +514,6 @@ void FLEXCAN_Init(CAN_Type *base, const flexcan_config_t *config, uint32_t sourc
     instance = FLEXCAN_GetInstance(base);
     /* Enable FlexCAN clock. */
     CLOCK_EnableClock(s_flexcanClock[instance]);
-    PRINTF("FLEXCAN clock enabled.\r\n");
 #if defined(FLEXCAN_PERIPH_CLOCKS)
     /* Enable FlexCAN serial clock. */
     CLOCK_EnableClock(s_flexcanPeriphClock[instance]);
@@ -525,30 +523,25 @@ void FLEXCAN_Init(CAN_Type *base, const flexcan_config_t *config, uint32_t sourc
 #if (!defined(FSL_FEATURE_FLEXCAN_SUPPORT_ENGINE_CLK_SEL_REMOVE)) || !FSL_FEATURE_FLEXCAN_SUPPORT_ENGINE_CLK_SEL_REMOVE
     /* Disable FlexCAN Module. */
     FLEXCAN_Enable(base, false);
-    PRINTF("FLEXCAN module disabled.\r\n");
 
     /* Protocol-Engine clock source selection, This bit must be set
      * when FlexCAN Module in Disable Mode.
      */
     base->CTRL1 = (kFLEXCAN_ClkSrcOsc == config->clkSrc) ? base->CTRL1 & ~CAN_CTRL1_CLKSRC_MASK :
                                                            base->CTRL1 | CAN_CTRL1_CLKSRC_MASK;
-    PRINTF("FLEXCAN clock source selected.\r\n");
 #endif /* FSL_FEATURE_FLEXCAN_SUPPORT_ENGINE_CLK_SEL_REMOVE */
 
     /* Enable FlexCAN Module for configuartion. */
     FLEXCAN_Enable(base, true);
-    PRINTF("FLEXCAN module enabled.\r\n");
 
     /* Reset to known status. */
     FLEXCAN_Reset(base);
-    PRINTF("FLEXCAN_Reset completed.\r\n");
 
     /* Save current MCR value and enable to enter Freeze mode(enabled by default). */
     mcrTemp = base->MCR;
 
     /* Set the maximum number of Message Buffers */
     mcrTemp = (mcrTemp & ~CAN_MCR_MAXMB_MASK) | CAN_MCR_MAXMB(config->maxMbNum - 1);
-    PRINTF("FLEXCAN MB num configured.\r\n");
 
     /* Enable Loop Back Mode? */
     base->CTRL1 = (config->enableLoopBack) ? base->CTRL1 | CAN_CTRL1_LPB_MASK : base->CTRL1 & ~CAN_CTRL1_LPB_MASK;
@@ -558,7 +551,6 @@ void FLEXCAN_Init(CAN_Type *base, const flexcan_config_t *config, uint32_t sourc
 
     /* Enable Individual Rx Masking? */
     mcrTemp = (config->enableIndividMask) ? mcrTemp | CAN_MCR_IRMQ_MASK : mcrTemp & ~CAN_MCR_IRMQ_MASK;
-    PRINTF("FLEXCAN loopback, self-wake, and individual mask bits set.\r\n");
 
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_DOZE_MODE_SUPPORT) && FSL_FEATURE_FLEXCAN_HAS_DOZE_MODE_SUPPORT)
     /* Enable Doze Mode? */
@@ -570,7 +562,6 @@ void FLEXCAN_Init(CAN_Type *base, const flexcan_config_t *config, uint32_t sourc
 
     /* Baud Rate Configuration.*/
     FLEXCAN_SetBaudRate(base, sourceClock_Hz, config->baudRate, config->timingConfig);
-    PRINTF("FLEXCAN baud rate configured.\r\n");
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE) && FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE)
     FLEXCAN_SetFDBaudRate(base, sourceClock_Hz, config->baudRateFD, config->timingConfig);
 #endif

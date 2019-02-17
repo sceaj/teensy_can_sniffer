@@ -12,6 +12,8 @@
 #include "fsl_common.h"
 #include "fsl_flexcan.h"
 #include "fsl_clock.h"
+#include "fsl_pit.h"
+#include "fsl_adc16.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -25,6 +27,25 @@ extern "C" {
 #define FLEXCAN_1_PERIPHERAL CAN0
 /* Definition of the clock source frequency */
 #define FLEXCAN_1_CLOCK_SOURCE 16000000UL
+/* BOARD_InitPeripherals defines for PIT */
+/* Definition of peripheral ID. */
+#define PIT_1_PERIPHERAL PIT
+/* Definition of clock source. */
+#define PIT_1_CLOCK_SOURCE kCLOCK_BusClk
+/* Definition of clock source frequency. */
+#define PIT_1_CLK_FREQ 60000000UL
+/* Definition of ticks count for channel 0. */
+#define PIT_1_0_TICKS 599999U
+/* PIT_1 interrupt vector ID (number). */
+#define PIT_1_0_IRQN PIT0_IRQn
+/* PIT_1 interrupt handler identifier. */
+#define Timer_IRQ PIT0_IRQHandler
+/* Alias for ADC1 peripheral */
+#define ADC16_1_PERIPHERAL ADC1
+/* ADC16_1 interrupt vector ID (number). */
+#define ADC16_1_IRQN ADC1_IRQn
+/* ADC16_1 interrupt handler identifier. */
+#define ADC16_1_IRQHANDLER ADC1_IRQHandler
 
 /***********************************************************************************************************************
  * Global variables
@@ -35,6 +56,10 @@ extern const flexcan_rx_mb_config_t FlexCAN_1_rx_mb_config_9;
 extern flexcan_rx_fifo_config_t FlexCAN_1_rx_fifo_config;
 extern void * g_flexcanRxFilters;
 extern flexcan_handle_t FlexCAN_1_handle;
+extern const pit_config_t PIT_1_config;
+extern const adc16_config_t ADC16_1_config;
+extern const adc16_channel_mux_mode_t ADC16_1_muxMode;
+extern const adc16_hardware_average_mode_t ADC16_1_hardwareAverageMode;
 
 /***********************************************************************************************************************
  * Callback functions

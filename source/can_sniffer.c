@@ -80,9 +80,14 @@ static flexcan_frame_t txFrame;
 static flexcan_fifo_transfer_t fifoTransfer;
 static uint32_t dataCount;
 static uint32_t remoteCount;
+volatile long timerTicks = 0L;
 
 #define FRAMEID_TO_STD_ID(x) ((uint16_t)(x / 0x40000U))
 
+void Timer_IRQ(void)
+{
+	++timerTicks;
+}
 
 static void delay(uint32_t delay_ms)
 {
@@ -111,7 +116,9 @@ status_t initSDcard(void)
 void logCanData(flexcan_frame_t* canFrame) {
 	if (canFrame->type == kFLEXCAN_FrameTypeData) {
 		uint16_t stdId = FRAMEID_TO_STD_ID(canFrame->id);
-        appendLog("$CAN,%03X,%02X,%02X,%02X,%02X,%02X,%02X,%02X,%02X\n",
+        appendLog("$CAN,%ld.%02ld,%03X,%02X,%02X,%02X,%02X,%02X,%02X,%02X,%02X\n",
+        		timerTicks / 100L,
+				timerTicks % 100L,
 				stdId,
 				canFrame->dataByte0,
 				canFrame->dataByte1,

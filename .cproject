@@ -82,11 +82,11 @@
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.undef.symbol.1972563689" name="Undefined symbols (-U)" superClass="gnu.c.compiler.option.preprocessor.undef.symbol"/>
 								<option id="gnu.c.compiler.option.include.paths.935773096" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="../drivers"/>
 									<listOptionValue builtIn="false" value="../CMSIS"/>
+									<listOptionValue builtIn="false" value="../drivers"/>
+									<listOptionValue builtIn="false" value="../utilities"/>
 									<listOptionValue builtIn="false" value="../usb/device/include"/>
 									<listOptionValue builtIn="false" value="../usb/device/source"/>
-									<listOptionValue builtIn="false" value="../utilities"/>
 									<listOptionValue builtIn="false" value="../usb/device/source/khci"/>
 									<listOptionValue builtIn="false" value="../usb/include"/>
 									<listOptionValue builtIn="false" value="../osa"/>
@@ -134,11 +134,11 @@
 								<option id="com.crt.advproject.gas.arch.1547983259" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm4" valueType="enumerated"/>
 								<option id="gnu.both.asm.option.flags.crt.409036218" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -D__REDLIB__" valueType="string"/>
 								<option id="gnu.both.asm.option.include.paths.470768688" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="../drivers"/>
 									<listOptionValue builtIn="false" value="../CMSIS"/>
+									<listOptionValue builtIn="false" value="../drivers"/>
+									<listOptionValue builtIn="false" value="../utilities"/>
 									<listOptionValue builtIn="false" value="../usb/device/include"/>
 									<listOptionValue builtIn="false" value="../usb/device/source"/>
-									<listOptionValue builtIn="false" value="../utilities"/>
 									<listOptionValue builtIn="false" value="../usb/device/source/khci"/>
 									<listOptionValue builtIn="false" value="../usb/include"/>
 									<listOptionValue builtIn="false" value="../osa"/>
@@ -362,11 +362,11 @@
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.undef.symbol.61492198" name="Undefined symbols (-U)" superClass="gnu.c.compiler.option.preprocessor.undef.symbol"/>
 								<option id="gnu.c.compiler.option.include.paths.1291070301" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="../drivers"/>
 									<listOptionValue builtIn="false" value="../CMSIS"/>
+									<listOptionValue builtIn="false" value="../drivers"/>
+									<listOptionValue builtIn="false" value="../utilities"/>
 									<listOptionValue builtIn="false" value="../usb/device/include"/>
 									<listOptionValue builtIn="false" value="../usb/device/source"/>
-									<listOptionValue builtIn="false" value="../utilities"/>
 									<listOptionValue builtIn="false" value="../usb/device/source/khci"/>
 									<listOptionValue builtIn="false" value="../usb/include"/>
 									<listOptionValue builtIn="false" value="../osa"/>
@@ -419,11 +419,11 @@
 								<option id="com.crt.advproject.gas.arch.384039720" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm4" valueType="enumerated"/>
 								<option id="gnu.both.asm.option.flags.crt.1282410034" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -D__REDLIB__" valueType="string"/>
 								<option id="gnu.both.asm.option.include.paths.719490654" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="../drivers"/>
 									<listOptionValue builtIn="false" value="../CMSIS"/>
+									<listOptionValue builtIn="false" value="../drivers"/>
+									<listOptionValue builtIn="false" value="../utilities"/>
 									<listOptionValue builtIn="false" value="../usb/device/include"/>
 									<listOptionValue builtIn="false" value="../usb/device/source"/>
-									<listOptionValue builtIn="false" value="../utilities"/>
 									<listOptionValue builtIn="false" value="../usb/device/source/khci"/>
 									<listOptionValue builtIn="false" value="../usb/include"/>
 									<listOptionValue builtIn="false" value="../osa"/>
@@ -693,7 +693,7 @@
 	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
 		<sdkName>SDK_2.x_MK64FX512xxx12</sdkName>
 		<sdkVersion>2.4.2</sdkVersion>
-		<sdkComponents>middleware.baremetal.MK64F12;platform.drivers.uart.MK64F12;platform.Include_common.MK64F12;platform.Include_core_cm4.MK64F12;platform.devices.MK64F12_CMSIS.MK64F12;platform.drivers.clock.MK64F12;platform.drivers.common.MK64F12;platform.utilities.virtual_com.MK64F12;middleware.usb.device.MK64F12;middleware.usb.device_controller_khci.MK64F12;platform.devices.MK64F12_startup.MK64F12;platform.drivers.sysmpu.MK64F12;platform.utilities.debug_console.MK64F12;platform.drivers.rtc.MK64F12;platform.drivers.dspi.MK64F12;platform.drivers.sdhc.MK64F12;platform.drivers.port.MK64F12;platform.drivers.gpio.MK64F12;platform.drivers.flexcan.MK64F12;platform.drivers.pit.MK64F12;</sdkComponents>
+		<sdkComponents>middleware.baremetal.MK64F12;platform.drivers.uart.MK64F12;platform.Include_common.MK64F12;platform.Include_core_cm4.MK64F12;platform.devices.MK64F12_CMSIS.MK64F12;platform.drivers.clock.MK64F12;platform.drivers.common.MK64F12;platform.utilities.virtual_com.MK64F12;middleware.usb.device.MK64F12;middleware.usb.device_controller_khci.MK64F12;platform.devices.MK64F12_startup.MK64F12;platform.drivers.sysmpu.MK64F12;platform.utilities.debug_console.MK64F12;platform.drivers.rtc.MK64F12;platform.drivers.dspi.MK64F12;platform.drivers.sdhc.MK64F12;platform.drivers.port.MK64F12;platform.drivers.gpio.MK64F12;platform.drivers.flexcan.MK64F12;platform.drivers.pit.MK64F12;platform.drivers.adc16.MK64F12;</sdkComponents>
 		<package>MK64FX512VMD12</package>
 		<core>cm4</core>
 	</storageModule>
