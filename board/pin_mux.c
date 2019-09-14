@@ -7,13 +7,17 @@
 /*
  * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Pins v4.1
+product: Pins v5.0
 processor: MK64FX512xxx12
 package_id: MK64FX512VMD12
 mcu_data: ksdk2_0
-processor_version: 4.0.1
+processor_version: 5.0.0
 pin_labels:
-- {pin_num: D8, pin_signal: PTC5/LLWU_P9/SPI0_SCK/LPTMR0_ALT2/I2S0_RXD0/FB_AD10/CMP0_OUT/FTM0_CH2, label: Arduino_D13, identifier: led_gpio}
+- {pin_num: D8, pin_signal: PTC5/LLWU_P9/SPI0_SCK/LPTMR0_ALT2/I2S0_RXD0/FB_AD10/CMP0_OUT/FTM0_CH2, label: LED, identifier: LED}
+- {pin_num: E9, pin_signal: PTB17/SPI1_SIN/UART0_TX/FTM_CLKIN1/FB_AD16/EWM_OUT_b, label: GPS_TX, identifier: GPS_TX}
+- {pin_num: E10, pin_signal: PTB16/SPI1_SOUT/UART0_RX/FTM_CLKIN0/FB_AD17/EWM_IN, label: GPS_RX, identifier: GPS_RX}
+- {pin_num: A11, pin_signal: CMP1_IN1/PTC3/LLWU_P7/SPI0_PCS1/UART1_RX/FTM0_CH2/CLKOUT/I2S0_TX_BCLK, label: DBG_RX, identifier: DBG_RX}
+- {pin_num: A9, pin_signal: PTC4/LLWU_P8/SPI0_PCS0/UART1_TX/FTM0_CH3/FB_AD11/CMP1_OUT, label: DBG_TX, identifier: DBG_TX}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -41,14 +45,21 @@ BOARD_InitPins:
 - options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
 - pin_list:
   - {pin_num: D8, peripheral: GPIOC, signal: 'GPIO, 5', pin_signal: PTC5/LLWU_P9/SPI0_SCK/LPTMR0_ALT2/I2S0_RXD0/FB_AD10/CMP0_OUT/FTM0_CH2, direction: OUTPUT}
-  - {pin_num: E4, peripheral: SDHC, signal: CMD, pin_signal: ADC0_DM2/ADC1_SE7a/PTE3/SPI1_SIN/UART1_RTS_b/SDHC0_CMD/TRACE_D1/SPI1_SOUT}
-  - {pin_num: D2, peripheral: SDHC, signal: 'DATA, 0', pin_signal: ADC1_SE5a/PTE1/LLWU_P0/SPI1_SOUT/UART1_RX/SDHC0_D0/TRACE_D3/I2C1_SCL/SPI1_SIN}
   - {pin_num: D3, peripheral: SDHC, signal: 'DATA, 1', pin_signal: ADC1_SE4a/PTE0/SPI1_PCS1/UART1_TX/SDHC0_D1/TRACE_CLKOUT/I2C1_SDA/RTC_CLKOUT}
-  - {pin_num: E2, peripheral: SDHC, signal: 'DATA, 2', pin_signal: PTE5/SPI1_PCS2/UART3_RX/SDHC0_D2/FTM3_CH0}
-  - {pin_num: E3, peripheral: SDHC, signal: 'DATA, 3', pin_signal: PTE4/LLWU_P2/SPI1_PCS0/UART3_TX/SDHC0_D3/TRACE_D0}
+  - {pin_num: D2, peripheral: SDHC, signal: 'DATA, 0', pin_signal: ADC1_SE5a/PTE1/LLWU_P0/SPI1_SOUT/UART1_RX/SDHC0_D0/TRACE_D3/I2C1_SCL/SPI1_SIN}
   - {pin_num: D1, peripheral: SDHC, signal: DCLK, pin_signal: ADC0_DP2/ADC1_SE6a/PTE2/LLWU_P1/SPI1_SCK/UART1_CTS_b/SDHC0_DCLK/TRACE_D2}
+  - {pin_num: E4, peripheral: SDHC, signal: CMD, pin_signal: ADC0_DM2/ADC1_SE7a/PTE3/SPI1_SIN/UART1_RTS_b/SDHC0_CMD/TRACE_D1/SPI1_SOUT}
+  - {pin_num: E3, peripheral: SDHC, signal: 'DATA, 3', pin_signal: PTE4/LLWU_P2/SPI1_PCS0/UART3_TX/SDHC0_D3/TRACE_D0}
+  - {pin_num: E2, peripheral: SDHC, signal: 'DATA, 2', pin_signal: PTE5/SPI1_PCS2/UART3_RX/SDHC0_D2/FTM3_CH0}
+  - {pin_num: A8, peripheral: ADC1, signal: 'SE, 4b', pin_signal: ADC1_SE4b/CMP0_IN2/PTC8/FTM3_CH4/I2S0_MCLK/FB_AD7}
+  - {pin_num: D7, peripheral: ADC1, signal: 'SE, 5b', pin_signal: ADC1_SE5b/CMP0_IN3/PTC9/FTM3_CH5/I2S0_RX_BCLK/FB_AD6/FTM2_FLT0}
+  - {pin_num: C7, peripheral: ADC1, signal: 'SE, 6b', pin_signal: ADC1_SE6b/PTC10/I2C1_SCL/FTM3_CH6/I2S0_RX_FS/FB_AD5}
   - {pin_num: J9, peripheral: CAN0, signal: RX, pin_signal: CMP2_IN1/PTA13/LLWU_P4/CAN0_RX/FTM1_CH1/RMII0_RXD0/MII0_RXD0/I2C2_SDA/I2S0_TX_FS/FTM1_QD_PHB}
   - {pin_num: K9, peripheral: CAN0, signal: TX, pin_signal: CMP2_IN0/PTA12/CAN0_TX/FTM1_CH0/RMII0_RXD1/MII0_RXD1/I2C2_SCL/I2S0_TXD0/FTM1_QD_PHA}
+  - {pin_num: E10, peripheral: UART0, signal: RX, pin_signal: PTB16/SPI1_SOUT/UART0_RX/FTM_CLKIN0/FB_AD17/EWM_IN}
+  - {pin_num: E9, peripheral: UART0, signal: TX, pin_signal: PTB17/SPI1_SIN/UART0_TX/FTM_CLKIN1/FB_AD16/EWM_OUT_b, direction: OUTPUT}
+  - {pin_num: C4, peripheral: UART2, signal: RX, pin_signal: PTD2/LLWU_P13/SPI0_SOUT/UART2_RX/FTM3_CH2/FB_AD4/I2C0_SCL}
+  - {pin_num: B4, peripheral: UART2, signal: TX, pin_signal: PTD3/SPI0_SIN/UART2_TX/FTM3_CH3/FB_AD3/I2C0_SDA}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -63,17 +74,21 @@ void BOARD_InitPins(void)
 {
     /* Port A Clock Gate Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortA);
+    /* Port B Clock Gate Control: Clock enabled */
+    CLOCK_EnableClock(kCLOCK_PortB);
     /* Port C Clock Gate Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortC);
+    /* Port D Clock Gate Control: Clock enabled */
+    CLOCK_EnableClock(kCLOCK_PortD);
     /* Port E Clock Gate Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortE);
 
-    gpio_pin_config_t led_gpio_config = {
+    gpio_pin_config_t LED_config = {
         .pinDirection = kGPIO_DigitalOutput,
         .outputLogic = 0U
     };
     /* Initialize GPIO functionality on pin PTC5 (pin D8)  */
-    GPIO_PinInit(BOARD_INITPINS_led_gpio_GPIO, BOARD_INITPINS_led_gpio_PIN, &led_gpio_config);
+    GPIO_PinInit(BOARD_INITPINS_LED_GPIO, BOARD_INITPINS_LED_PIN, &LED_config);
 
     /* PORTA12 (pin K9) is configured as CAN0_TX */
     PORT_SetPinMux(PORTA, 12U, kPORT_MuxAlt2);
@@ -81,8 +96,29 @@ void BOARD_InitPins(void)
     /* PORTA13 (pin J9) is configured as CAN0_RX */
     PORT_SetPinMux(PORTA, 13U, kPORT_MuxAlt2);
 
+    /* PORTB16 (pin E10) is configured as UART0_RX */
+    PORT_SetPinMux(BOARD_INITPINS_GPS_RX_PORT, BOARD_INITPINS_GPS_RX_PIN, kPORT_MuxAlt3);
+
+    /* PORTB17 (pin E9) is configured as UART0_TX */
+    PORT_SetPinMux(BOARD_INITPINS_GPS_TX_PORT, BOARD_INITPINS_GPS_TX_PIN, kPORT_MuxAlt3);
+
+    /* PORTC10 (pin C7) is configured as ADC1_SE6b */
+    PORT_SetPinMux(PORTC, 10U, kPORT_PinDisabledOrAnalog);
+
     /* PORTC5 (pin D8) is configured as PTC5 */
-    PORT_SetPinMux(BOARD_INITPINS_led_gpio_PORT, BOARD_INITPINS_led_gpio_PIN, kPORT_MuxAsGpio);
+    PORT_SetPinMux(BOARD_INITPINS_LED_PORT, BOARD_INITPINS_LED_PIN, kPORT_MuxAsGpio);
+
+    /* PORTC8 (pin A8) is configured as ADC1_SE4b */
+    PORT_SetPinMux(PORTC, 8U, kPORT_PinDisabledOrAnalog);
+
+    /* PORTC9 (pin D7) is configured as ADC1_SE5b */
+    PORT_SetPinMux(PORTC, 9U, kPORT_PinDisabledOrAnalog);
+
+    /* PORTD2 (pin C4) is configured as UART2_RX */
+    PORT_SetPinMux(PORTD, 2U, kPORT_MuxAlt3);
+
+    /* PORTD3 (pin B4) is configured as UART2_TX */
+    PORT_SetPinMux(PORTD, 3U, kPORT_MuxAlt3);
 
     /* PORTE0 (pin D3) is configured as SDHC0_D1 */
     PORT_SetPinMux(PORTE, 0U, kPORT_MuxAlt4);
@@ -101,6 +137,13 @@ void BOARD_InitPins(void)
 
     /* PORTE5 (pin E2) is configured as SDHC0_D2 */
     PORT_SetPinMux(PORTE, 5U, kPORT_MuxAlt4);
+
+    SIM->SOPT5 = ((SIM->SOPT5 &
+                   /* Mask bits to zero which are setting */
+                   (~(SIM_SOPT5_UART0TXSRC_MASK)))
+
+                  /* UART 0 transmit data source select: UART0_TX pin. */
+                  | SIM_SOPT5_UART0TXSRC(SOPT5_UART0TXSRC_UART_TX));
 }
 /***********************************************************************************************************************
  * EOF

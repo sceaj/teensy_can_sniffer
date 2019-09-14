@@ -7,11 +7,11 @@
 #include "fsl_sd_disk.h"
 #include "fsl_debug_console.h"
 #include "ff.h"
-#include "string.h"
+#include "stdio.h"
 
-#define LOG_BUFFER_SIZE 4096
+#define LOG_BUFFER_SIZE 2048
 #define LOG_BUFFER_AVAIL (LOG_BUFFER_SIZE - (g_dataBufferNext - g_dataBuffer))
-#define LOG_BUFFER_MIN_FREE 40
+#define LOG_BUFFER_MIN_FREE 80
 
 static FATFS g_fileSystem; /* File system object */
 static FIL g_fileObject;   /* File object */
@@ -130,8 +130,8 @@ status_t checkRollLogger(void) {
     // Check the size of the current log
     fr = f_stat(g_currentPathname, &fno);
     if (fr == FR_OK) {
-    	// 1MB max log size
-    	if (fno.fsize > (1024 * 1024)) {
+    	// 4MB max log size
+    	if (fno.fsize > (4 * 1024 * 1024)) {
     		// Roll file...
     		strcpy(filename, strrchr(g_currentPathname, '/') + 1);
     		*strrchr(filename, '.') = 0;
@@ -173,6 +173,16 @@ void appendLog(const char* fmt, ...)
 	va_start(argsp, fmt);
 	_formatLog(fmt, argsp);
 	va_end(argsp);
+}
+
+void putLog(const char* str)
+{
+	strcpy(g_dataBufferNext, str);
+	g_dataBufferNext += strlen(g_dataBufferNext);
+	if (LOG_BUFFER_AVAIL < LOG_BUFFER_MIN_FREE) {
+		flushLog();
+	}
+
 }
 
 void flushLog(void) {

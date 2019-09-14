@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 NXP Semiconductor, Inc.
+ * Copyright 2016-2018 NXP
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -41,18 +41,14 @@
 /**
  * @brief	The board name 
  */
-#define BOARD_NAME "teensy3.5"
+#define BOARD_NAME "board"
 
-#define BOARD_SDHC_BASEADDR SDHC
-// Lie to the SDK since it will try to switch to high-speed mode there is an assertion that will fail.
-// Seems like this may be a KSDK bug (https://community.nxp.com/message/1071745)
+/* Unfortunately we need to lie to the SDK - see https://community.nxp.com/thread/487368
+#define BOARD_SDHC_CLK_FREQ MCG_INTERNAL_IRC_48M
+*/
 #define BOARD_SDHC_CLK_FREQ 50000000U
-#define BOARD_SDHC_IRQ SDHC_IRQn
 #define BOARD_SDHC_CD_GPIO_BASE 0U
 #define BOARD_SDHC_CD_GPIO_PIN 0
-#define BOARD_SDHC_CD_PORT_BASE 0U // Not used
-#define BOARD_SDHC_CD_PORT_IRQ 0U // Not used
-
 
 #if defined(__cplusplus)
 extern "C" {

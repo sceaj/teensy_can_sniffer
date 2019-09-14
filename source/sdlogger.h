@@ -34,6 +34,8 @@ status_t closeLogger(void);
 
 void appendLog(const char* fmt, ...);
 
+void putLog(const char* str);
+
 void flushLog(void);
 
 #endif

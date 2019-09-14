@@ -6,11 +6,11 @@
 /* clang-format off */
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Peripherals v4.1
+product: Peripherals v5.0
 processor: MK64FX512xxx12
 package_id: MK64FX512VMD12
 mcu_data: ksdk2_0
-processor_version: 4.0.1
+processor_version: 5.0.0
 functionalGroups:
 - name: BOARD_InitPeripherals
   called_from_default_init: true
@@ -34,6 +34,156 @@ component:
  * BOARD_InitPeripherals functional group
  **********************************************************************************************************************/
 /***********************************************************************************************************************
+ * PIT_1 initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'PIT_1'
+- type: 'pit'
+- mode: 'LPTMR_GENERAL'
+- type_id: 'pit_a4782ba5223c8a2527ba91aeb2bc4159'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'PIT'
+- config_sets:
+  - fsl_pit:
+    - enableRunInDebug: 'false'
+    - timingConfig:
+      - clockSource: 'BusInterfaceClock'
+      - clockSourceFreq: 'BOARD_BootClockRUN'
+    - channels:
+      - 0:
+        - channelNumber: '0'
+        - enableChain: 'false'
+        - timerPeriod: '10ms'
+        - startTimer: 'true'
+        - enableInterrupt: 'true'
+        - interrupt:
+          - IRQn: 'PIT0_IRQn'
+          - enable_priority: 'false'
+          - enable_custom_name: 'false'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const pit_config_t PIT_1_config = {
+  .enableRunInDebug = false
+};
+
+void PIT_1_init(void) {
+  /* Initialize the PIT. */
+  PIT_Init(PIT_1_PERIPHERAL, &PIT_1_config);
+  /* Set channel 0 period to 10 ms (600000 ticks). */
+  PIT_SetTimerPeriod(PIT_1_PERIPHERAL, kPIT_Chnl_0, PIT_1_0_TICKS);
+  /* Enable interrupts from channel 0. */
+  PIT_EnableInterrupts(PIT_1_PERIPHERAL, kPIT_Chnl_0, kPIT_TimerInterruptEnable);
+  /* Enable interrupt PIT_1_0_IRQN request in the NVIC */
+  EnableIRQ(PIT_1_0_IRQN);
+  /* Start channel 0. */
+  PIT_StartTimer(PIT_1_PERIPHERAL, kPIT_Chnl_0);
+}
+
+/***********************************************************************************************************************
+ * ADC16_1 initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'ADC16_1'
+- type: 'adc16'
+- mode: 'ADC'
+- type_id: 'adc16_7d827be2dc433dc756d94a7ce88cbcc5'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'ADC1'
+- config_sets:
+  - fsl_adc16:
+    - adc16_config:
+      - referenceVoltageSource: 'kADC16_ReferenceVoltageSourceVref'
+      - clockSource: 'kADC16_ClockSourceAsynchronousClock'
+      - enableAsynchronousClock: 'true'
+      - clockDivider: 'kADC16_ClockDivider2'
+      - resolution: 'kADC16_ResolutionSE10Bit'
+      - longSampleMode: 'kADC16_LongSampleCycle10'
+      - enableHighSpeed: 'false'
+      - enableLowPower: 'false'
+      - enableContinuousConversion: 'false'
+    - adc16_channel_mux_mode: 'kADC16_ChannelMuxB'
+    - adc16_hardware_compare_config:
+      - hardwareCompareModeEnable: 'false'
+    - doAutoCalibration: 'false'
+    - offset: '0'
+    - trigger: 'false'
+    - hardwareAverageConfiguration: 'kADC16_HardwareAverageCount8'
+    - enable_dma: 'false'
+    - enable_irq: 'true'
+    - adc_interrupt:
+      - IRQn: 'ADC1_IRQn'
+      - enable_priority: 'false'
+      - enable_custom_name: 'false'
+    - adc16_channels_config:
+      - 0:
+        - enableDifferentialConversion: 'false'
+        - channelNumber: 'SE.4b'
+        - enableInterruptOnConversionCompleted: 'true'
+        - channelGroup: '0'
+        - initializeChannel: 'false'
+      - 1:
+        - enableDifferentialConversion: 'false'
+        - channelNumber: 'SE.5b'
+        - enableInterruptOnConversionCompleted: 'true'
+        - channelGroup: '0'
+        - initializeChannel: 'false'
+      - 2:
+        - enableDifferentialConversion: 'false'
+        - channelNumber: 'SE.6b'
+        - enableInterruptOnConversionCompleted: 'true'
+        - channelGroup: '0'
+        - initializeChannel: 'false'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+adc16_channel_config_t ADC16_1_channelsConfig[3] = {
+  {
+    .channelNumber = 4U,
+    .enableDifferentialConversion = false,
+    .enableInterruptOnConversionCompleted = true,
+  },
+  {
+    .channelNumber = 5U,
+    .enableDifferentialConversion = false,
+    .enableInterruptOnConversionCompleted = true,
+  },
+  {
+    .channelNumber = 6U,
+    .enableDifferentialConversion = false,
+    .enableInterruptOnConversionCompleted = true,
+  }
+};
+const adc16_config_t ADC16_1_config = {
+  .referenceVoltageSource = kADC16_ReferenceVoltageSourceVref,
+  .clockSource = kADC16_ClockSourceAsynchronousClock,
+  .enableAsynchronousClock = true,
+  .clockDivider = kADC16_ClockDivider2,
+  .resolution = kADC16_ResolutionSE10Bit,
+  .longSampleMode = kADC16_LongSampleCycle10,
+  .enableHighSpeed = false,
+  .enableLowPower = false,
+  .enableContinuousConversion = false
+};
+const adc16_channel_mux_mode_t ADC16_1_muxMode = kADC16_ChannelMuxB;
+const adc16_hardware_average_mode_t ADC16_1_hardwareAverageMode = kADC16_HardwareAverageCount8;
+
+void ADC16_1_init(void) {
+  /* Enable interrupt ADC16_1_IRQN request in the NVIC */
+  EnableIRQ(ADC16_1_IRQN);
+  /* Initialize ADC16 converter */
+  ADC16_Init(ADC16_1_PERIPHERAL, &ADC16_1_config);
+  /* Make sure, that software trigger is used */
+  ADC16_EnableHardwareTrigger(ADC16_1_PERIPHERAL, false);
+  /* Configure hardware average mode */
+  ADC16_SetHardwareAverage(ADC16_1_PERIPHERAL, ADC16_1_hardwareAverageMode);
+  /* Configure channel multiplexing mode */
+  ADC16_SetChannelMuxMode(ADC16_1_PERIPHERAL, ADC16_1_muxMode);
+}
+
+/***********************************************************************************************************************
  * FlexCAN_1 initialization code
  **********************************************************************************************************************/
 /* clang-format off */
@@ -42,20 +192,20 @@ instance:
 - name: 'FlexCAN_1'
 - type: 'flexcan'
 - mode: 'transfer'
-- type_id: 'flexcan_ba45456ec815807245205237e2bf425b'
+- type_id: 'flexcan_d4764a197c0db35c88f36862312557e4'
 - functional_group: 'BOARD_InitPeripherals'
 - peripheral: 'CAN0'
 - config_sets:
   - transferCfg:
     - transfer:
-      - init_rx_transfer: 'false'
+      - init_rx_transfer: 'true'
       - rx_transfer:
-        - frame: 'FrameRx'
-        - mbIdx: '0'
-      - init_tx_transfer: 'false'
+        - frame: 'rxFrame'
+        - mbIdx: '9'
+      - init_tx_transfer: 'true'
       - tx_transfer:
-        - frame: 'FrameTx'
-        - mbIdx: '1'
+        - frame: 'txFrame'
+        - mbIdx: '8'
       - init_callback: 'true'
       - callback_fcn: 'flexcanCallback'
       - user_data: ''
@@ -63,9 +213,11 @@ instance:
     - can_config:
       - clockSource: 'kFLEXCAN_ClkSrcOsc'
       - clockSourceFreq: 'BOARD_BootClockRUN'
+      - wakeupSrc: 'kFLEXCAN_WakeupSrcUnfiltered'
       - baudRate: '500000'
       - maxMbNum: '10'
       - enableLoopBack: 'false'
+      - enableTimerSync: 'false'
       - enableSelfWakeup: 'false'
       - enableIndividMask: 'false'
       - timingConfig:
@@ -76,7 +228,7 @@ instance:
         - bitTime: []
     - enableRxFIFO: 'true'
     - rxFIFO:
-      - idFilterTable: 'g_flexcanRxFilters'
+      - idFilterTable: 'g_rxFifoFilters'
       - idFilterNum: 'num0'
       - idFilterType: 'kFLEXCAN_RxFifoFilterTypeA'
       - priority: 'kFLEXCAN_RxFifoPrioHigh'
@@ -99,9 +251,11 @@ instance:
 /* clang-format on */
 const flexcan_config_t FlexCAN_1_config = {
   .clkSrc = kFLEXCAN_ClkSrcOsc,
+  .wakeupSrc = kFLEXCAN_WakeupSrcUnfiltered,
   .baudRate = 500000,
   .maxMbNum = 10,
   .enableLoopBack = false,
+  .enableTimerSync = false,
   .enableSelfWakeup = false,
   .enableIndividMask = false,
   .timingConfig = {
@@ -118,17 +272,28 @@ const flexcan_rx_mb_config_t FlexCAN_1_rx_mb_config_9 = {
   .type = kFLEXCAN_FrameTypeData
 };
 flexcan_rx_fifo_config_t FlexCAN_1_rx_fifo_config = {
-  .idFilterNum = 0,
+  .idFilterNum = 8,
   .idFilterType = kFLEXCAN_RxFifoFilterTypeA,
   .priority = kFLEXCAN_RxFifoPrioHigh
 };
 flexcan_handle_t FlexCAN_1_handle;
+flexcan_frame_t rxFrame;
+const flexcan_mb_transfer_t FLEXCAN_1_rx_mb_transfer = {
+  .frame = &rxFrame,
+  .mbIdx = 9
+};
+flexcan_frame_t txFrame;
+const flexcan_mb_transfer_t FLEXCAN_1_tx_mb_transfer = {
+  .frame = &txFrame,
+  .mbIdx = 8
+};
 
 void FlexCAN_1_init(void) {
   FLEXCAN_Init(FLEXCAN_1_PERIPHERAL, &FlexCAN_1_config, FLEXCAN_1_CLOCK_SOURCE);
 
-  FlexCAN_1_rx_fifo_config.idFilterTable = g_flexcanRxFilters;
+  FlexCAN_1_rx_fifo_config.idFilterTable = g_rxFifoFilters;
   FLEXCAN_SetRxFifoConfig(FLEXCAN_1_PERIPHERAL, &FlexCAN_1_rx_fifo_config, true);
+  FLEXCAN_SetRxFifoGlobalMask	(FLEXCAN_1_PERIPHERAL, 0x7F0);
   /* Message buffer 9 initialization */
   FLEXCAN_SetRxMbConfig(FLEXCAN_1_PERIPHERAL, 9, &FlexCAN_1_rx_mb_config_9, true);
   /* Message buffer 8 initialization */
@@ -137,12 +302,75 @@ void FlexCAN_1_init(void) {
 }
 
 /***********************************************************************************************************************
+ * UART_1 initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'UART_1'
+- type: 'uart'
+- mode: 'interrupts'
+- type_id: 'uart_cd31a12aa8c79051fda42cc851a27c37'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'UART0'
+- config_sets:
+  - uartConfig_t:
+    - uartConfig:
+      - clockSource: 'BusInterfaceClock'
+      - clockSourceFreq: 'GetFreq'
+      - baudRate_Bps: '115200'
+      - parityMode: 'kUART_ParityDisabled'
+      - stopBitCount: 'kUART_OneStopBit'
+      - txFifoWatermark: '0'
+      - rxFifoWatermark: '1'
+      - idleType: 'kUART_IdleTypeStartBit'
+      - enableTx: 'true'
+      - enableRx: 'true'
+    - quick_selection: 'QuickSelection1'
+  - interruptsCfg:
+    - interrupts: 'kUART_TxDataRegEmptyInterruptEnable kUART_TransmissionCompleteInterruptEnable kUART_RxDataRegFullInterruptEnable kUART_RxOverrunInterruptEnable'
+    - interrupt_vectors:
+      - enable_rx_tx_irq: 'true'
+      - interrupt_rx_tx:
+        - IRQn: 'UART0_RX_TX_IRQn'
+        - enable_priority: 'false'
+        - enable_custom_name: 'false'
+      - enable_err_irq: 'false'
+      - interrupt_err:
+        - IRQn: 'UART0_ERR_IRQn'
+        - enable_priority: 'false'
+        - enable_custom_name: 'false'
+    - quick_selection: 'QuickSelection1'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const uart_config_t UART_1_config = {
+  .baudRate_Bps = 115200,
+  .parityMode = kUART_ParityDisabled,
+  .stopBitCount = kUART_OneStopBit,
+  .txFifoWatermark = 0,
+  .rxFifoWatermark = 1,
+  .idleType = kUART_IdleTypeStartBit,
+  .enableTx = true,
+  .enableRx = true
+};
+
+void UART_1_init(void) {
+  UART_Init(UART_1_PERIPHERAL, &UART_1_config, UART_1_CLOCK_SOURCE);
+  UART_EnableInterrupts(UART_1_PERIPHERAL, kUART_RxDataRegFullInterruptEnable | kUART_RxOverrunInterruptEnable);
+  /* Enable interrupt UART0_RX_TX_IRQn request in the NVIC */
+  EnableIRQ(UART_1_SERIAL_RX_TX_IRQN);
+}
+
+/***********************************************************************************************************************
  * Initialization functions
  **********************************************************************************************************************/
 void BOARD_InitPeripherals(void)
 {
   /* Initialize components */
+  PIT_1_init();
+  ADC16_1_init();
   FlexCAN_1_init();
+  UART_1_init();
 }
 
 /***********************************************************************************************************************
