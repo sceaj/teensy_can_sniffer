@@ -25,12 +25,26 @@ extern "C" {
  */
 void BOARD_InitBootPins(void);
 
-/*! @name PORTC5 (coord D8), Arduino_D13
+#define SOPT5_UART0TXSRC_UART_TX 0x00u /*!<@brief UART 0 transmit data source select: UART0_TX pin */
+
+/*! @name PORTC5 (coord D8), LED
   @{ */
-#define BOARD_INITPINS_led_gpio_GPIO GPIOC /*!<@brief GPIO device name: GPIOC */
-#define BOARD_INITPINS_led_gpio_PORT PORTC /*!<@brief PORT device name: PORTC */
-#define BOARD_INITPINS_led_gpio_PIN 5U     /*!<@brief PORTC pin index: 5 */
-                                           /* @} */
+#define BOARD_INITPINS_LED_GPIO GPIOC /*!<@brief GPIO device name: GPIOC */
+#define BOARD_INITPINS_LED_PORT PORTC /*!<@brief PORT device name: PORTC */
+#define BOARD_INITPINS_LED_PIN 5U     /*!<@brief PORTC pin index: 5 */
+                                      /* @} */
+
+/*! @name PORTB16 (coord E10), GPS_RX
+  @{ */
+#define BOARD_INITPINS_GPS_RX_PORT PORTB /*!<@brief PORT device name: PORTB */
+#define BOARD_INITPINS_GPS_RX_PIN 16U    /*!<@brief PORTB pin index: 16 */
+                                         /* @} */
+
+/*! @name PORTB17 (coord E9), GPS_TX
+  @{ */
+#define BOARD_INITPINS_GPS_TX_PORT PORTB /*!<@brief PORT device name: PORTB */
+#define BOARD_INITPINS_GPS_TX_PIN 17U    /*!<@brief PORTB pin index: 17 */
+                                         /* @} */
 
 /*!
  * @brief Configures pin routing and optionally pin electrical features.

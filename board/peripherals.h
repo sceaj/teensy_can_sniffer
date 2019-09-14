@@ -10,10 +10,11 @@
  * Included files
  **********************************************************************************************************************/
 #include "fsl_common.h"
-#include "fsl_flexcan.h"
-#include "fsl_clock.h"
 #include "fsl_pit.h"
 #include "fsl_adc16.h"
+#include "fsl_flexcan.h"
+#include "fsl_clock.h"
+#include "fsl_uart.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -23,10 +24,6 @@ extern "C" {
  * Definitions
  **********************************************************************************************************************/
 /* Definitions for BOARD_InitPeripherals functional group */
-/* Definition of peripheral ID */
-#define FLEXCAN_1_PERIPHERAL CAN0
-/* Definition of the clock source frequency */
-#define FLEXCAN_1_CLOCK_SOURCE 16000000UL
 /* BOARD_InitPeripherals defines for PIT */
 /* Definition of peripheral ID. */
 #define PIT_1_PERIPHERAL PIT
@@ -39,27 +36,54 @@ extern "C" {
 /* PIT_1 interrupt vector ID (number). */
 #define PIT_1_0_IRQN PIT0_IRQn
 /* PIT_1 interrupt handler identifier. */
-#define Timer_IRQ PIT0_IRQHandler
+#define PIT_1_0_IRQHANDLER PIT0_IRQHandler
 /* Alias for ADC1 peripheral */
 #define ADC16_1_PERIPHERAL ADC1
 /* ADC16_1 interrupt vector ID (number). */
 #define ADC16_1_IRQN ADC1_IRQn
 /* ADC16_1 interrupt handler identifier. */
 #define ADC16_1_IRQHANDLER ADC1_IRQHandler
+/* Definition of peripheral ID */
+#define FLEXCAN_1_PERIPHERAL CAN0
+/* Definition of the clock source frequency */
+#define FLEXCAN_1_CLOCK_SOURCE 16000000UL
+/* Definition of peripheral ID */
+#define UART_1_PERIPHERAL UART0
+/* Definition of the clock source frequency */
+#define UART_1_CLOCK_SOURCE CLOCK_GetFreq(UART0_CLK_SRC)
+/* UART_1 interrupt vector ID (number). */
+#define UART_1_SERIAL_RX_TX_IRQN UART0_RX_TX_IRQn
+/* UART_1 interrupt handler identifier. */
+#define UART_1_SERIAL_RX_TX_IRQHANDLER UART0_RX_TX_IRQHandler
+/* UART_1 interrupt vector ID (number). */
+#define UART_1_SERIAL_ERROR_IRQN UART0_ERR_IRQn
+/* UART_1 interrupt handler identifier. */
+#define UART_1_SERIAL_ERROR_IRQHANDLER UART0_ERR_IRQHandler
+/* Definition of peripheral ID */
+#define UART_3_PERIPHERAL UART1
+/* Definition of the clock source frequency */
+#define UART_3_CLOCK_SOURCE CLOCK_GetFreq(UART1_CLK_SRC)
 
 /***********************************************************************************************************************
  * Global variables
  **********************************************************************************************************************/
+extern const pit_config_t PIT_1_config;
+extern adc16_channel_config_t ADC16_1_channelsConfig[3];
+extern const adc16_config_t ADC16_1_config;
+extern const adc16_channel_mux_mode_t ADC16_1_muxMode;
+extern const adc16_hardware_average_mode_t ADC16_1_hardwareAverageMode;
 extern const flexcan_config_t FlexCAN_1_config;
 /* Message buffer 9 configuration structure */
 extern const flexcan_rx_mb_config_t FlexCAN_1_rx_mb_config_9;
 extern flexcan_rx_fifo_config_t FlexCAN_1_rx_fifo_config;
-extern void * g_flexcanRxFilters;
+extern void * g_rxFifoFilters;
 extern flexcan_handle_t FlexCAN_1_handle;
-extern const pit_config_t PIT_1_config;
-extern const adc16_config_t ADC16_1_config;
-extern const adc16_channel_mux_mode_t ADC16_1_muxMode;
-extern const adc16_hardware_average_mode_t ADC16_1_hardwareAverageMode;
+extern flexcan_frame_t rxFrame;
+extern const flexcan_mb_transfer_t FLEXCAN_1_rx_mb_transfer;
+extern flexcan_frame_t txFrame;
+extern const flexcan_mb_transfer_t FLEXCAN_1_tx_mb_transfer;
+extern const uart_config_t UART_1_config;
+extern const uart_config_t UART_3_config;
 
 /***********************************************************************************************************************
  * Callback functions
