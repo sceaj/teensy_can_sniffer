@@ -250,7 +250,7 @@ int main(void) {
         // Do we need to log any CAN data
     	while (CAN_IsFrameAvailable()) {
     		flexcan_frame_t* frame = CAN_NextFrame();
-    		if (isLogging && (canDataCount & 0x01)) {
+    		if (isLogging && (canDataCount & 3)) {
     			logCanData(frame);
 //    			printCanData(frame);
     		}

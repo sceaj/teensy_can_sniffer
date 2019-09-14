@@ -130,8 +130,8 @@ status_t checkRollLogger(void) {
     // Check the size of the current log
     fr = f_stat(g_currentPathname, &fno);
     if (fr == FR_OK) {
-    	// 4MB max log size
-    	if (fno.fsize > (4 * 1024 * 1024)) {
+    	// 32MB max log size
+    	if (fno.fsize > (32 * 1024 * 1024)) {
     		// Roll file...
     		strcpy(filename, strrchr(g_currentPathname, '/') + 1);
     		*strrchr(filename, '.') = 0;
