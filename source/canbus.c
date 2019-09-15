@@ -27,7 +27,7 @@ volatile bool canRxFifoBufferOverflow = false;
 volatile bool flexcanRxFifoOverflow = false;
 volatile bool flexcanRxFifoWarning = false;
 
-#define CAN_FIFO_BUFFER_SIZE 256
+#define CAN_FIFO_BUFFER_SIZE 512
 static flexcan_frame_t canRxFifoBuffer[CAN_FIFO_BUFFER_SIZE];
 volatile int canFifoBufferRead = 0;
 volatile int canFifoBufferWrite = 0;
