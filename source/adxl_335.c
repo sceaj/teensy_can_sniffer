@@ -17,12 +17,14 @@
 #define ACCEL_CONV_CPLT 0x10
 #define ACCEL_CONV_IDLE 0x20
 
-#define ACCEL_FIFO_BUFFER_SIZE 64
+#define ACCEL_FIFO_BUFFER_SIZE 128
 
 volatile uint8_t accelAxis = 0;
 static accel_data_t accelFifo[ACCEL_FIFO_BUFFER_SIZE];
 static int accelFifoRead = 0;
 static int accelFifoWrite = 0;
+
+extern volatile long timerTicks;
 
 /*
  * Accelerometer conversion complete Interrupt
@@ -39,6 +41,7 @@ void ADC16_1_IRQHANDLER(void)
 	accelAxis |= ACCEL_CONV_CPLT;
 	// If we're back to axis 0, transistion to IDLE mode until TriggerConversion() is next called
 	if (accelAxis == ACCEL_CONV_CPLT) {
+		accelFifo[accelFifoWrite].timestamp = timerTicks;
 		accelFifoWrite = FIFO_BUFFER_ADVANCE(accelFifoWrite, ACCEL_FIFO_BUFFER_SIZE);
 	}
 }

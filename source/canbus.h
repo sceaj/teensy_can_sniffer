@@ -12,6 +12,11 @@
 
 #define CAN_STD_ID(id) (id >> CAN_ID_STD_SHIFT)
 
+typedef struct _can_data {
+	flexcan_frame_t canFrame;
+	long timestamp;
+} can_data_t;
+
 void CAN_Enable();
 
 void CAN_Disable();
@@ -24,7 +29,7 @@ void CAN_SendFrame(flexcan_frame_t* frame);
 
 int CAN_IsFrameAvailable();
 
-flexcan_frame_t* CAN_NextFrame();
+can_data_t* CAN_NextFrame();
 
 void CAN_PrintStatus();
 

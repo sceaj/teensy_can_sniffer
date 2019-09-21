@@ -27,8 +27,8 @@ volatile bool canRxFifoBufferOverflow = false;
 volatile bool flexcanRxFifoOverflow = false;
 volatile bool flexcanRxFifoWarning = false;
 
-#define CAN_FIFO_BUFFER_SIZE 512
-static flexcan_frame_t canRxFifoBuffer[CAN_FIFO_BUFFER_SIZE];
+#define CAN_FIFO_BUFFER_SIZE 4096
+static can_data_t canRxFifoBuffer[CAN_FIFO_BUFFER_SIZE];
 volatile int canFifoBufferRead = 0;
 volatile int canFifoBufferWrite = 0;
 
@@ -36,6 +36,7 @@ static flexcan_fifo_transfer_t flexcanFifoTransfer;
 volatile int canTxCount;
 volatile int canCallbackCount;
 
+extern volatile long timerTicks;
 
 /*
  * FLEXCAN module support methods
@@ -48,8 +49,9 @@ void flexcanCallback(CAN_Type *base, flexcan_handle_t *handle, status_t status, 
 		if (FIFO_BUFFER_FULL(canFifoBufferRead,canFifoBufferWrite,CAN_FIFO_BUFFER_SIZE)) {
 			canRxFifoBufferOverflow = true;
 		} else {
+			canRxFifoBuffer[canFifoBufferWrite].timestamp = timerTicks;
 			canFifoBufferWrite = FIFO_BUFFER_ADVANCE(canFifoBufferWrite, CAN_FIFO_BUFFER_SIZE);
-			flexcanFifoTransfer.frame = &canRxFifoBuffer[canFifoBufferWrite];
+			flexcanFifoTransfer.frame = &canRxFifoBuffer[canFifoBufferWrite].canFrame;
 		}
 		FLEXCAN_TransferReceiveFifoNonBlocking(FLEXCAN_1_PERIPHERAL, &FlexCAN_1_handle, &flexcanFifoTransfer);
 	}
@@ -76,7 +78,7 @@ void CAN_Disable()
 
 status_t CAN_StartReceiving()
 {
-    flexcanFifoTransfer.frame = &canRxFifoBuffer[canFifoBufferWrite];
+    flexcanFifoTransfer.frame = &canRxFifoBuffer[canFifoBufferWrite].canFrame;
 	return FLEXCAN_TransferReceiveFifoNonBlocking(FLEXCAN_1_PERIPHERAL, &FlexCAN_1_handle, &flexcanFifoTransfer);
 }
 
@@ -90,10 +92,10 @@ int CAN_IsFrameAvailable()
 	return FIFO_AVL(canFifoBufferRead,canFifoBufferWrite);
 }
 
-flexcan_frame_t* CAN_NextFrame()
+can_data_t* CAN_NextFrame()
 {
-	flexcan_frame_t* nextFrame = &canRxFifoBuffer[canFifoBufferRead];
-	canFifoBufferRead = FIFO_BUFFER_ADVANCE(canFifoBufferRead,CAN_FIFO_BUFFER_SIZE);
+	can_data_t* nextFrame = &canRxFifoBuffer[canFifoBufferRead];
+	canFifoBufferRead = FIFO_BUFFER_ADVANCE(canFifoBufferRead, CAN_FIFO_BUFFER_SIZE);
 	return nextFrame;
 }
 
