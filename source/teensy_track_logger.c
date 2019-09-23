@@ -267,7 +267,7 @@ int main(void) {
         	if (isLogging)
         	{
         		putLog(nmeaSentence);
-        		PRINTF("%s\r", nmeaSentence);
+//        		PRINTF("%s\r", nmeaSentence);
         	}
         	gpsDataCount++;
         }
