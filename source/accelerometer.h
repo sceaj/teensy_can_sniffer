@@ -14,6 +14,7 @@ typedef struct {
 	int16_t  rawY;  // Pin A8 (PTC8)
 	int16_t  rawX;  // Pin D7 (PTC9)
 	int16_t  rawZ;  // Pin C7 (PTC10)
+	long     timestamp;
 } accel_data_t;
 
 /*!

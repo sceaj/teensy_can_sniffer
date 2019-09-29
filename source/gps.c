@@ -23,7 +23,8 @@ void _delay(uint32_t delay_ms);
 
 static const char* locosys_ack_format = "$PMTK001,%d,3*";
 static const char* locosys_115200_baud = "$PMTK251,115200*1F\r\n";
-static const char* locosys_config_nmea = "$PMTK314,0,1,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0*2C\r\n";
+// static const char* locosys_config_nmea = "$PMTK314,0,1,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0*2C\r\n";
+static const char* locosys_config_nmea = "$PMTK314,0,1,0,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n";
 static const char* locosys_5Hz_update = "$PMTK220,200*2C\r\n";
 
 static uint8_t gps_uartBuffer[GPS_UART_BUFFER_SIZE + 1];
