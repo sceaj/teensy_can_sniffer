@@ -68,6 +68,11 @@ void PIT0_IRQHandler(void)
 {
 	++timerTicks;
 
+	if (!(timerTicks % 5L)) {
+		/* Start a new Accelerometer reading, ~20Hz */
+		ACCEL_TriggerCollection();
+	}
+
 	PIT_ClearStatusFlags(PIT_1_PERIPHERAL, kPIT_Chnl_0, kPIT_TimerFlag);
 }
 /* END 100Hz PIT */
@@ -105,21 +110,21 @@ static status_t initSDcard(void)
 
 
 /* CAN Frame Logging */
-void logCanData(flexcan_frame_t* canFrame) {
-	if (canFrame->type == kFLEXCAN_FrameTypeData) {
-		uint16_t stdId = CAN_STD_ID(canFrame->id);
+void logCanData(can_data_t* canData) {
+	if (canData->canFrame.type == kFLEXCAN_FrameTypeData) {
+		uint16_t stdId = CAN_STD_ID(canData->canFrame.id);
         appendLog("$CNDRV,%ld.%02ld,%03X,%02X,%02X,%02X,%02X,%02X,%02X,%02X,%02X\n",
-        		timerTicks / 100L,
-				timerTicks % 100L,
+        		canData->timestamp / 100L,
+				canData->timestamp % 100L,
 				stdId,
-				canFrame->dataByte0,
-				canFrame->dataByte1,
-				canFrame->dataByte2,
-				canFrame->dataByte3,
-				canFrame->dataByte4,
-				canFrame->dataByte5,
-				canFrame->dataByte6,
-				canFrame->dataByte7);
+				canData->canFrame.dataByte0,
+				canData->canFrame.dataByte1,
+				canData->canFrame.dataByte2,
+				canData->canFrame.dataByte3,
+				canData->canFrame.dataByte4,
+				canData->canFrame.dataByte5,
+				canData->canFrame.dataByte6,
+				canData->canFrame.dataByte7);
 	}
 }
 /* END CAN Frame Logging */
@@ -221,9 +226,6 @@ int main(void) {
 
         	lastTimerTick = timerTicks;
 
-        	/* Start a new Accelerometer reading, ~50Hz */
-        	ACCEL_TriggerCollection();
-
         	if ((timerTicks % 20) == 0) {
 
         		CAN_PrintStatus();
@@ -249,8 +251,8 @@ int main(void) {
 
         // Do we need to log any CAN data
     	while (CAN_IsFrameAvailable()) {
-    		flexcan_frame_t* frame = CAN_NextFrame();
-    		if (isLogging && (canDataCount & 0x01)) {
+    		can_data_t* frame = CAN_NextFrame();
+    		if (isLogging) {
     			logCanData(frame);
 //    			printCanData(frame);
     		}
@@ -265,7 +267,7 @@ int main(void) {
         	if (isLogging)
         	{
         		putLog(nmeaSentence);
-        		PRINTF("%s\r", nmeaSentence);
+//        		PRINTF("%s\r", nmeaSentence);
         	}
         	gpsDataCount++;
         }
@@ -275,8 +277,8 @@ int main(void) {
         	accel_data_t* datapoint = ACCEL_NextDatapoint();
         	if (isLogging) {
         		appendLog("$AC001,%ld.%02ld,%d,%d,%d\n",
-        				timerTicks / 100L,
-        				timerTicks % 100L,
+        				datapoint->timestamp / 100L,
+        				datapoint->timestamp % 100L,
 						datapoint->rawX,
 						datapoint->rawY,
 						datapoint->rawZ);

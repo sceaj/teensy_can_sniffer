@@ -9,17 +9,22 @@
 #include "ff.h"
 #include "stdio.h"
 
-#define LOG_BUFFER_SIZE 2048
-#define LOG_BUFFER_AVAIL (LOG_BUFFER_SIZE - (g_dataBufferNext - g_dataBuffer))
-#define LOG_BUFFER_MIN_FREE 80
+#define LOG_BUFFER_SIZE 8192
+#define LOG_BUFFER_OVERFLOW 128
+#define LOG_BUFFER_AVAIL ((LOG_BUFFER_SIZE + LOG_BUFFER_OVERFLOW) - (g_dataBufferNext - g_dataBuffer))
+#define LOG_BUFFER_MIN_FREE 128
 
 static FATFS g_fileSystem; /* File system object */
 static FIL g_fileObject;   /* File object */
 static const char* g_loggerRootpath = "2:/LOGGER";
+static char g_loggerPrefix[6];
+static int g_fileNum;
+static int g_fileSize;
 static char g_loggerPattern[13];
 static char g_currentPathname[22];
-static char g_dataBuffer[LOG_BUFFER_SIZE];
+static char g_dataBuffer[LOG_BUFFER_SIZE + LOG_BUFFER_OVERFLOW];
 static char* g_dataBufferNext;
+static char* g_dataBufferOverflow;
 
 status_t mountSDfilesystem(void) {
 	FRESULT fresult = f_mount(&g_fileSystem, "2:/", 1);
@@ -72,11 +77,24 @@ status_t dumpSDfile(char* pathname)
 }
 
 
+void setPathname(int filenum)
+{
+	static char filename[13];
+
+	sprintf(filename, "%s%03d", g_loggerPrefix, filenum);
+	strcpy(g_currentPathname, g_loggerRootpath);
+	strcat(g_currentPathname, "/");
+	strcat(g_currentPathname, filename);
+	strcat(g_currentPathname, ".LOG");
+}
+
 status_t openLogger(const char* prefix)
 {
     FRESULT fr;     /* Return value */
     DIR dj;         /* Directory search object */
     static FILINFO fno;    /* File information */
+
+    strcpy(g_loggerPrefix, prefix);
 
     static char filename[13];
     memset(filename, 0, sizeof filename);
@@ -92,29 +110,31 @@ status_t openLogger(const char* prefix)
     // Search existing files of requested prefix
     strncpy(g_loggerPattern, prefix, 5);
     strcat(g_loggerPattern, "*.LOG");
-    int fileno = 0;
+    int fileNum = 0;
 
-    fr = f_findfirst(&dj, &fno, g_loggerRootpath, g_loggerPattern);  /* Start to search for photo files */
+    fr = f_findfirst(&dj, &fno, g_loggerRootpath, g_loggerPattern);  /* Start to search for logger files */
     while (fr == FR_OK && fno.fname[0]) { /* Repeat while an item is found */
     	strcpy(filename, fno.fname);
     	*strrchr(filename, '.') = 0;
-    	if (atoi(&filename[strlen(prefix)]) > fileno) {
-    		fileno = atoi(&filename[strlen(prefix)]);
+    	int currentFileNum = atoi(&filename[strlen(prefix)]);
+    	if (currentFileNum > fileNum) {
+    		fileNum = currentFileNum;
     	}
         fr = f_findnext(&dj, &fno); /* Search for next item */
     }
     fr = f_closedir(&dj);
+
+    g_fileNum = ++fileNum;
+    g_dataBufferNext = g_dataBuffer;
+    g_dataBufferOverflow = g_dataBuffer + LOG_BUFFER_SIZE;
+
     if (fr == FR_OK) {
 		// Create the next filename
-		sprintf(filename, "%s%03d", prefix, ++fileno);
-		strcpy(g_currentPathname, g_loggerRootpath);
-		strcat(g_currentPathname, "/");
-		strcat(g_currentPathname, filename);
-		strcat(g_currentPathname, ".log");
+    	setPathname(g_fileNum);
 		// Open the file
 		fr = f_open(&g_fileObject, g_currentPathname, FA_CREATE_NEW | FA_WRITE);
 		PRINTF("Opening: %s [%s]\r\n", g_currentPathname, fr == FR_OK ? "OK" : "Failed");
-		g_dataBufferNext = g_dataBuffer;
+		g_fileSize = 0;
     }
 
     return (fr == FR_OK) ? kStatus_Success : kStatus_Fail;
@@ -123,30 +143,17 @@ status_t openLogger(const char* prefix)
 status_t checkRollLogger(void) {
 
     FRESULT fr;     /* Return value */
-    FILINFO fno;    /* File information */
-    char filename[13];
-    char filenostr[4];
-
-    // Check the size of the current log
-    fr = f_stat(g_currentPathname, &fno);
-    if (fr == FR_OK) {
-    	// 4MB max log size
-    	if (fno.fsize > (4 * 1024 * 1024)) {
-    		// Roll file...
-    		strcpy(filename, strrchr(g_currentPathname, '/') + 1);
-    		*strrchr(filename, '.') = 0;
-    		int fileno = atoi(&filename[strlen(filename) - 3]);
-    		sprintf(filenostr, "%03d", ++fileno);
-    		strcpy(&filename[strlen(filename) - 3], filenostr);
-    		strcat(filename, ".log");
-    		f_close(&g_fileObject);
-    		strcpy(strrchr(g_currentPathname, '/') + 1, filename);
-    		fr = f_open(&g_fileObject, g_currentPathname, FA_CREATE_NEW | FA_WRITE);
-    		PRINTF("Opening: %s [%s]\r\n", g_currentPathname, fr == FR_OK ? "OK" : "Failed");
-    	} else {
-    		fr = f_sync(&g_fileObject);
-    	}
-    }
+	// 32MB max log size
+	if (g_fileSize > (32UL * 1024UL * 1024UL)) {
+		// Roll file...
+		f_close(&g_fileObject);
+		setPathname(++g_fileNum);
+		fr = f_open(&g_fileObject, g_currentPathname, FA_OPEN_ALWAYS | FA_WRITE);
+		PRINTF("Opening: %s [%s]\r\n", g_currentPathname, fr == FR_OK ? "OK" : "Failed");
+		g_fileSize = 0;
+	} else {
+		fr = f_sync(&g_fileObject);
+	}
 
     return (fr == FR_OK) ? kStatus_Success : kStatus_Fail;
 }
@@ -186,8 +193,12 @@ void putLog(const char* str)
 }
 
 void flushLog(void) {
-	writeLog(g_dataBuffer);
-	g_dataBufferNext = g_dataBuffer;
+	unsigned writeSize;
+	f_write(&g_fileObject, g_dataBuffer, LOG_BUFFER_SIZE, &writeSize);
+	g_fileSize += writeSize;
+	strcpy(g_dataBuffer, g_dataBufferOverflow);
+	g_dataBufferNext = g_dataBuffer + strlen(g_dataBuffer);
+	*g_dataBufferOverflow = 0;
 	checkRollLogger();
 }
 
